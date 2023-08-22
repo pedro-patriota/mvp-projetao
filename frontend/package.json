@@ -15,7 +15,8 @@
     "@mui/icons-material": "^5.14.3",
     "@mui/joy": "^5.0.0-beta.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

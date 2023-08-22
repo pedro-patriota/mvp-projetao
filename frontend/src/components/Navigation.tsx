@@ -18,7 +18,7 @@ export default function Navigation() {
         <List size="sm" sx={{ "--ListItem-radius": "8px", "--List-gap": "4px" }}>
             <ListItem nested>
                 <ListSubheader>
-                    Browse
+                    Casos
                     <IconButton
                         size="sm"
                         variant="plain"
@@ -60,7 +60,7 @@ export default function Navigation() {
             </ListItem>
             <ListItem nested sx={{ mt: 2 }}>
                 <ListSubheader>
-                    Tags
+                    Usuários
                     <IconButton
                         size="sm"
                         variant="plain"

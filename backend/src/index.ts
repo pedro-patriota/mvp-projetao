@@ -13,7 +13,7 @@ app.get('/', (request: Request, response: Response) => {
     response.status(200).send('Everything is working!')
 })
 
-app.use('/api/notes', PatientsRouter)
+app.use('/patient', PatientsRouter)
 
 app.all('*', (req: Request, res: Response) => {
     res.status(404).json(`Route: ${req.originalUrl} does not exist on this server.`)

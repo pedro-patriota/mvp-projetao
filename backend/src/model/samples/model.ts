@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../db'
 
-export const PatientsModel = sequelize.define('SAMPLES', {
+export const SamplesModel = sequelize.define('SAMPLES', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
