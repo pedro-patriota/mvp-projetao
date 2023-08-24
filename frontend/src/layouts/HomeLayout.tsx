@@ -1,7 +1,13 @@
 import React from "react";
 import Box from "@mui/joy/Box";
+import Typography from "@mui/joy/Typography";
 import IconButton from "@mui/joy/IconButton";
+
+import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
+import MenuIcon from "@mui/icons-material/Menu";
+
 // custom
+import Link from "@mui/joy/Link";
 import { Outlet } from "react-router-dom";
 import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
 
@@ -10,7 +16,6 @@ import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import CssBaseline from "@mui/joy/CssBaseline";
 import "./App.css";
 import Button from "@mui/joy/Button";
-import Link from "@mui/joy/Link";
 import Logo from "../components/Logo";
 
 function ColorSchemeToggle() {
@@ -39,7 +44,7 @@ function ColorSchemeToggle() {
     );
 }
 
-export default function AppLayout() {
+export default function HomeLayout() {
     return (
         <CssVarsProvider disableTransitionOnChange>
             <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
@@ -73,14 +78,15 @@ export default function AppLayout() {
                         <Logo />
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 2.5 }}>
-                        <Link href="#basics">Dashboard</Link>
-                        <Link href="#basics">Novo Caso</Link>
-                        <Link href="#basics">Analise</Link>
-                        <Link href="#basics">Casos</Link>
+                        <Link href="#basics">Home</Link>
+                        <Link href="#basics">Sobre</Link>
+                        <Link href="#basics">Acesso à informação</Link>
+                        <Link href="#basics">Suporte</Link>
                     </Box>
+
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
-                        <Button variant="soft">Costa</Button>
-                        <Button>Sair</Button>
+                        <Button variant="soft">Entrar</Button>
+                        <Button>Cadastrar</Button>
                     </Box>
                 </Box>
                 <Outlet></Outlet>
