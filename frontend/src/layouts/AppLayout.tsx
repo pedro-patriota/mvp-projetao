@@ -42,9 +42,9 @@ function ColorSchemeToggle() {
 export default function AppLayout() {
     return (
         <CssVarsProvider disableTransitionOnChange>
-            <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
+            {/* <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
                 <ColorSchemeToggle />
-            </div>
+            </div> */}
             <CssBaseline />
             <Box
                 sx={{

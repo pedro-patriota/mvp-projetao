@@ -6,11 +6,18 @@ import Typography from "@mui/joy/Typography";
 
 export default function Logo() {
     return (
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 1, alignItems: "center" }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 1,
+                alignItems: "center",
+                pointerEvents: "none",
+            }}>
             <IconButton size="sm" variant="soft">
                 <ScienceIcon />
             </IconButton>
-            <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <Box sx={{ display: "flex", flexDirection: "row", pointerEvents: "none" }}>
                 <Typography component="h1" fontWeight="xl" textColor="primary.500">
                     Geno
                 </Typography>
