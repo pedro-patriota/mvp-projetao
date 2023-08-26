@@ -73,10 +73,18 @@ export default function AppLayout() {
                         <Logo />
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 2.5 }}>
-                        <Link href="#basics">Dashboard</Link>
-                        <Link href="#basics">Novo Caso</Link>
-                        <Link href="#basics">Analise</Link>
-                        <Link href="#basics">Casos</Link>
+                        <Link href="#basics" fontWeight="lg">
+                            Dashboard
+                        </Link>
+                        <Link href="#basics" fontWeight="lg">
+                            Novo Caso
+                        </Link>
+                        <Link href="#basics" fontWeight="lg">
+                            Analise
+                        </Link>
+                        <Link href="#basics" fontWeight="lg">
+                            Casos
+                        </Link>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
                         <Button variant="soft">Costa</Button>
