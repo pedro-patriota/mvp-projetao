@@ -10,6 +10,30 @@ export const PatientsModel = sequelize.define('PATIENTS', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    cpf: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    sibling: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    transplante: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    transfusao: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
     gender: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -17,5 +41,8 @@ export const PatientsModel = sequelize.define('PATIENTS', {
     age: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    genes: {
+        type: DataTypes.TEXT,
     },
 })
