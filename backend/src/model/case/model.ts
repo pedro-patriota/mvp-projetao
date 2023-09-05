@@ -18,7 +18,7 @@ export const CaseModel = sequelize.define('CASES', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    process: {
+    processes: {
         type: DataTypes.TEXT,
         allowNull: false,
     },
