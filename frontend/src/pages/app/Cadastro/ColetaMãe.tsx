@@ -3,11 +3,21 @@ import Box from "@mui/joy/Box";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import { Button, Input, Radio, RadioGroup, Typography } from "@mui/joy";
+import {useLocation} from 'react-router-dom';
+
 
 export default function NovaColeta() {
+    const location = useLocation()
+
+    var type = location.state.type; // "mae", "pai" ou "filho"
+
+    // make it change mae to Mae and so on
+    type = type.charAt(0).toUpperCase() + type.slice(1);
+    
     return (
         <Box
             sx={{
+                paddingY: "2rem",
                 width: "100%",
                 height: "100%",
                 display: "flex",
@@ -37,6 +47,7 @@ export default function NovaColeta() {
                         flexDirection: "column",
                         gap: "0.5rem",
                     }}>
+                    <Typography level="h1">{type}</Typography>
                     <Box sx={{ width: "100%", display: "flex", flexDirection: "row", gap: "10px" }}>
                         <Box
                             sx={{
