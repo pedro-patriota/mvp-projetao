@@ -6,20 +6,25 @@ import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
 import NovaColeta from "./pages/app/NovaColeta";
+import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 
 export default function FilesExample() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<HomeLayout />}>
-                    <Route path="singin" element={<SignIn />}></Route>
-                    <Route path="singup" element={<SignUp />}></Route>
-                </Route>
-                <Route path="app" element={<AppLayout />}>
-                    <Route path="casos" element={<Casos />}></Route>
-                    <Route path="nova-coleta" element={<NovaColeta />}></Route>
-                </Route>
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomeLayout />}>
+          <Route path="singin" element={<SignIn />}></Route>
+          <Route path="singup" element={<SignUp />}></Route>
+        </Route>
+        <Route path="app" element={<AppLayout />}>
+          <Route path="casos" element={<Casos />}></Route>
+          <Route path="nova-coleta" element={<NovaColeta />}></Route>
+          <Route
+            path="sequenciador-seletor"
+            element={<SequenciadorSeletor />}
+          ></Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
