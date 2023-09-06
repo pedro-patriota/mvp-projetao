@@ -7,6 +7,7 @@ import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
 import NovaColeta from "./pages/app/NovaColeta";
 import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
+import SequenciamentoLista from "./pages/app/SequenciamentoLista";
 
 export default function FilesExample() {
   return (
@@ -22,6 +23,10 @@ export default function FilesExample() {
           <Route
             path="sequenciador-seletor"
             element={<SequenciadorSeletor />}
+          ></Route>
+          <Route
+            path="sequenciador-lista"
+            element={<SequenciamentoLista />}
           ></Route>
         </Route>
       </Routes>
