@@ -5,7 +5,7 @@ import AppLayout from "./layouts/AppLayout";
 import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
-import NovaColeta from "./pages/app/Cadastro/ColetaMãe";
+import NovaColeta from "./pages/app/Cadastro/Cadastro";
 import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 
 export default function FilesExample() {

@@ -76,7 +76,7 @@ export default function AppLayout() {
                         <Link href="#basics" fontWeight="lg">
                             Dashboard
                         </Link>
-                        <Link href="#basics" fontWeight="lg">
+                        <Link href="/app/cadastro" fontWeight="lg">
                             Cadastro
                         </Link>
                         <Link href="#basics" fontWeight="lg">

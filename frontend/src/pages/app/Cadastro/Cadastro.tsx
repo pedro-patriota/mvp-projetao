@@ -14,6 +14,7 @@ export default function NovaColeta() {
     // make it change mae to Mae and so on
     type = type.charAt(0).toUpperCase() + type.slice(1);
 
+    
     return (
         <Box
             sx={{
