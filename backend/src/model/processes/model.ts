@@ -10,7 +10,7 @@ export const ProcessModel = sequelize.define('PROCESSES', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    details: {
+    detalhes: {
         type: DataTypes.TEXT,
         allowNull: false,
     },

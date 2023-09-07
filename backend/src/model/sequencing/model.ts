@@ -10,4 +10,16 @@ export const SequencingModel = sequelize.define('SEQUENCING', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    didBy: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    kit: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    map: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
 })
