@@ -1,8 +1,8 @@
 import z from 'zod'
 
 export const UserSchema = z.object({
-    fullName: z.string().nonempty(),
     email: z.string().email(),
+    fullName: z.string().nonempty(),
     password: z.string().nonempty(),
 })
 

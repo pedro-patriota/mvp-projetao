@@ -2,11 +2,69 @@ import { Button, FormControl, FormLabel, Input, Link, Typography } from "@mui/jo
 import Box from "@mui/joy/Box";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import KeyIcon from "@mui/icons-material/Key";
-import React from "react";
+import React, { useState } from "react";
 import SignInImage from "../../assets/signin.svg";
 import Logo from "../../components/Logo";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { UserSchema } from "../../../../backend/common/user";
+
+const URL = "http://localhost:3000/users/login";
 
 export default function SignIn() {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async () => {
+        const parse = UserSchema.pick({ email: true, password: true }).safeParse({
+            email,
+            password,
+        });
+
+        if (parse.success) {
+            await fetch(URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            })
+                .then((response) => {
+                    if (response.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    } else if (response.status === 404) {
+                        toast.warning("Email ou senha incorretos.", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    } else {
+                        toast.success("Bem-vindo(a)!", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        //navigate("/singin");
+                    }
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
+        } else {
+            toast.error("Preencha os campos corretamente", {
+                position: "bottom-center",
+                theme: "light",
+            });
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -77,6 +135,8 @@ export default function SignIn() {
                                     sx={{ width: "100%" }}
                                     placeholder="Email..."
                                     startDecorator={<AccountCircleIcon></AccountCircleIcon>}
+                                    value={email}
+                                    onChange={(event) => setEmail(event.target.value)}
                                 />
                                 <FormLabel>Senha</FormLabel>
                                 <Input
@@ -84,12 +144,17 @@ export default function SignIn() {
                                     placeholder="Senha..."
                                     type="password"
                                     startDecorator={<KeyIcon></KeyIcon>}
+                                    value={password}
+                                    onChange={(event) => setPassword(event.target.value)}
                                 />
                             </FormControl>
                         </Box>
-                        <Button sx={{ width: "100%" }}>Entrar</Button>
+                        <Button sx={{ width: "100%" }} type="button" onClick={() => handleSubmit()}>
+                            Entrar
+                        </Button>
                         <Typography color="neutral" fontSize="sm">
-                            Caso não tenha conta, clique aqui para se <Link>cadastrar</Link>
+                            Caso não tenha conta, clique aqui para se{" "}
+                            <Link href="/singup">cadastrar</Link>
                         </Typography>
                     </Box>
                 </Box>
