@@ -96,7 +96,7 @@ export default function HomeCadastro() {
                                         width: "100%",
                                         fontSize: "1.5rem", 
                                     }}
-                                    onClick={() => navigateTo("Filho")}
+                                    onClick={() => navigateTo("Filho(a)")}
                                     >Filho(a)</Button>
                             </FormControl>
                         </Box>
