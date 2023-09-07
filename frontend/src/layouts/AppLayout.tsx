@@ -77,6 +77,9 @@ export default function AppLayout() {
                             Dashboard
                         </Link>
                         <Link href="#basics" fontWeight="lg">
+                            Cadastro
+                        </Link>
+                        <Link href="#basics" fontWeight="lg">
                             Novo Caso
                         </Link>
                         <Link href="#basics" fontWeight="lg">
