@@ -1,12 +1,63 @@
-import { Button, FormControl, FormLabel, Input, Typography } from "@mui/joy";
+import { Button, FormControl, FormLabel, Input, Link, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import KeyIcon from "@mui/icons-material/Key";
 import SignUpImage from "../../assets/signup.svg";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../../components/Logo";
+import { UserSchema } from "../../../../backend/common/user";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+const URL = "http://localhost:3000/users";
 
 export default function SignUp() {
+    const [fullName, setFullName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const navigate = useNavigate();
+
+    const handleSubmit = async () => {
+        const parse = UserSchema.safeParse({ fullName, email, password });
+
+        if (parse.success) {
+            await fetch(URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ fullName, email, password }),
+            })
+                .then((response) => {
+                    if (response.status === 404 || response.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    } else {
+                        toast.success("Conta criada!", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        navigate("/singin");
+                    }
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
+        } else {
+            toast.error("Preencha os campos corretamente", {
+                position: "bottom-center",
+                theme: "light",
+            });
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -81,32 +132,54 @@ export default function SignUp() {
                         <Box
                             sx={{
                                 width: "100%",
+                                gap: "0.5rem",
+                                display: "flex",
+                                flexDirection: "column",
                             }}>
+                            <FormLabel>Nome completo</FormLabel>
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Nome..."
+                                required
+                                value={fullName}
+                                onChange={(event) => setFullName(event.target.value)}
+                            />
+                            <FormLabel>Email</FormLabel>
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Email..."
+                                required
+                                startDecorator={<AccountCircleIcon></AccountCircleIcon>}
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                            />
+                            <FormLabel>Senha</FormLabel>
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Senha..."
+                                required
+                                type="password"
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                startDecorator={<KeyIcon></KeyIcon>}
+                            />
+                            <Button
+                                sx={{ width: "100%" }}
+                                type="button"
+                                onClick={() => handleSubmit()}>
+                                Cadastrar
+                            </Button>
                             <FormControl
                                 sx={{
                                     width: "100%",
                                     display: "flex",
                                     flexDirection: "column",
                                     gap: "0.5rem",
-                                }}>
-                                <FormLabel>Nome completo</FormLabel>
-                                <Input sx={{ width: "100%" }} placeholder="Nome..." />
-                                <FormLabel>Email</FormLabel>
-                                <Input
-                                    sx={{ width: "100%" }}
-                                    placeholder="Email..."
-                                    startDecorator={<AccountCircleIcon></AccountCircleIcon>}
-                                />
-                                <FormLabel>Senha</FormLabel>
-                                <Input
-                                    sx={{ width: "100%" }}
-                                    placeholder="Senha..."
-                                    type="password"
-                                    startDecorator={<KeyIcon></KeyIcon>}
-                                />
-                            </FormControl>
+                                }}></FormControl>
                         </Box>
-                        <Button sx={{ width: "100%" }}>Cadastrar</Button>
+                        <Typography color="neutral" fontSize="sm">
+                            Já tem um conta? clique aqui para <Link href="/singin">entrar</Link>
+                        </Typography>
                     </Box>
                 </Box>
             </Box>

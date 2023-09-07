@@ -1,23 +1,24 @@
 import { Request, Response } from 'express'
-import { Case, CaseSchema } from '../../common/case'
+import { Sequencing, SequencingSchema } from '../../common/sequencing'
 import { nanoid } from 'nanoid'
-import { CaseModel } from '../model/case/model'
+import { SequencingModel } from '../model/sequencing/model'
 import { z } from 'zod'
 
-export async function CreateCase(request: Request, response: Response) {
-    const schema = CaseSchema.omit({ id: true })
+export async function CreateSequencing(request: Request, response: Response) {
+    const schema = SequencingSchema.omit({ id: true })
     const id = nanoid()
 
-    const parsedCase = schema.safeParse(request.body)
+    const parsedSequencing = schema.safeParse(request.body)
 
-    if (parsedCase.success) {
-        const tempCase: Case = {
+    if (parsedSequencing.success) {
+        const tempSequencing: Sequencing = {
             id,
             ...request.body,
-            processes: JSON.stringify(request.body.processes),
+            cases: JSON.stringify(request.body.cases),
+            map: JSON.stringify(request.body.map),
         }
 
-        await CaseModel.create(tempCase)
+        await SequencingModel.create(tempSequencing)
             .then(() => {
                 response.status(201).send({ id })
             })
@@ -25,22 +26,22 @@ export async function CreateCase(request: Request, response: Response) {
                 response.status(500).send(e)
             })
     } else {
-        response.status(400).send(parsedCase.error)
+        response.status(400).send(parsedSequencing.error)
     }
 }
 
-export async function GetCase(request: Request, response: Response) {
+export async function GetSequencing(request: Request, response: Response) {
     const parsedGet = z.object({ id: z.string() }).safeParse(request.query)
 
     if (parsedGet.success) {
-        await CaseModel.findByPk((request.query as { id: string }).id)
-            .then((cases) => {
-                if (cases === null) {
+        await SequencingModel.findByPk((request.query as { id: string }).id)
+            .then((sequencings) => {
+                if (sequencings === null) {
                     response.status(404).send()
                     return
                 }
 
-                response.status(200).send(cases)
+                response.status(200).send(sequencings)
             })
             .catch((e) => {
                 response.status(500).send(e)
@@ -50,10 +51,10 @@ export async function GetCase(request: Request, response: Response) {
     }
 }
 
-export async function GetAllCases(request: Request, response: Response) {
-    await CaseModel.findAll()
+export async function GetAllSequencings(request: Request, response: Response) {
+    await SequencingModel.findAll()
         .then((res) => {
-            let patients: Case[] = []
+            let patients: Sequencing[] = []
 
             for (let i = 0; i < res.length; i++) {
                 patients.push(res[i].dataValues)
@@ -66,13 +67,16 @@ export async function GetAllCases(request: Request, response: Response) {
         })
 }
 
-export async function UpdateCase(request: Request, response: Response) {
-    const parsedCase = CaseSchema.safeParse(request.body)
+export async function UpdateSequencing(request: Request, response: Response) {
+    const parsedSequencing = SequencingSchema.safeParse(request.body)
 
-    if (parsedCase.success) {
-        const parsedBody = request.body as Case
+    if (parsedSequencing.success) {
+        const parsedBody = request.body as Sequencing
 
-        const result = await CaseModel.update({ ...parsedBody, processes: JSON.stringify(parsedBody.processes) }, { where: { id: parsedBody.id } })
+        const result = await SequencingModel.update(
+            { ...parsedBody, cases: JSON.stringify(request.body.cases), map: JSON.stringify(request.body.map) },
+            { where: { id: parsedBody.id } }
+        )
 
         if (result[0] === 0) {
             response.status(404).send()
@@ -81,17 +85,17 @@ export async function UpdateCase(request: Request, response: Response) {
 
         response.status(200).send()
     } else {
-        response.status(400).send(parsedCase.error)
+        response.status(400).send(parsedSequencing.error)
     }
 
     return
 }
 
-export async function DeleteCase(request: Request, response: Response) {
+export async function DeleteSequencing(request: Request, response: Response) {
     const parsedGet = z.object({ id: z.string() }).safeParse(request.body)
 
     if (parsedGet.success) {
-        await CaseModel.destroy({
+        await SequencingModel.destroy({
             where: {
                 id: request.body.id,
             },
