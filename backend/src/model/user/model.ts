@@ -8,7 +8,7 @@ export const UsersModel = sequelize.define('USERS', {
     },
     fullName: {
         type: DataTypes.STRING,
-        primaryKey: false,
+        allowNull: false,
     },
     password: {
         type: DataTypes.STRING,
