@@ -5,7 +5,8 @@ import AppLayout from "./layouts/AppLayout";
 import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
-import NovaColeta from "./pages/app/NovaColeta";
+import NovaColeta from "./pages/app/Cadastro/ColetaMãe";
+import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 
 export default function FilesExample() {
     return (
@@ -17,7 +18,10 @@ export default function FilesExample() {
                 </Route>
                 <Route path="app" element={<AppLayout />}>
                     <Route path="casos" element={<Casos />}></Route>
-                    <Route path="nova-coleta" element={<NovaColeta />}></Route>
+                    <Route path="cadastro">
+                        <Route path="nova-coleta" element={<NovaColeta />}></Route>
+                        <Route path="" element={<HomeCadastro />}></Route>
+                    </Route>
                 </Route>
             </Routes>
         </BrowserRouter>

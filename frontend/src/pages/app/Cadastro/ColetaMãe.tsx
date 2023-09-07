@@ -3,11 +3,21 @@ import Box from "@mui/joy/Box";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import { Button, Input, Radio, RadioGroup, Typography } from "@mui/joy";
+import { useLocation } from 'react-router-dom';
+
 
 export default function NovaColeta() {
+    const location = useLocation()
+
+    var type = location.state.type; // "mae", "pai" ou "filho"
+
+    // make it change mae to Mae and so on
+    type = type.charAt(0).toUpperCase() + type.slice(1);
+
     return (
         <Box
             sx={{
+                paddingY: "2rem",
                 width: "100%",
                 height: "100%",
                 display: "flex",
@@ -37,6 +47,7 @@ export default function NovaColeta() {
                         flexDirection: "column",
                         gap: "0.5rem",
                     }}>
+                    <Typography level="h1">{type}</Typography>
                     <Box sx={{ width: "100%", display: "flex", flexDirection: "row", gap: "10px" }}>
                         <Box
                             sx={{
@@ -123,28 +134,81 @@ export default function NovaColeta() {
                             </Box>
                         </Box>
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "1rem",
-                            alignItems: "center",
-                        }}>
-                        <Typography>
-                            Você testemunhou a coleta das amostras biologicas do suposto pai do
-                            individuo que se quer determinar a paternidade?
-                        </Typography>
-                        <RadioGroup
-                            defaultValue="-"
-                            orientation="horizontal"
-                            sx={{
-                                gap: "0.5rem",
-                            }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
-                        </RadioGroup>
-                    </Box>
+                    {type == "Mãe" ?
+                        <Box>
+
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    gap: "1rem",
+                                    alignItems: "center",
+                                }}>
+                                <Typography>
+                                    Você testemunhou a coleta das amostras biologicas do suposto pai do
+                                    individuo que se quer determinar a paternidade?
+                                </Typography>
+                                <RadioGroup
+                                    defaultValue="-"
+                                    orientation="horizontal"
+                                    sx={{
+                                        gap: "0.5rem",
+                                    }}>
+                                    <Radio value="sim" label="Sim" />
+                                    <Radio value="nao" label="Não" />
+                                </RadioGroup>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    gap: "1rem",
+                                    alignItems: "center",
+                                }}>
+                                <Typography>
+                                    Algum parente biologico do susposto pai poderia ser eventualmente
+                                    considerado como suposto pai do examinado que se quer determinar a
+                                    paternidade?
+                                </Typography>
+                                <RadioGroup
+                                    defaultValue="-"
+                                    orientation="horizontal"
+                                    sx={{
+                                        gap: "0.5rem",
+                                    }}>
+                                    <Radio value="sim" label="Sim" />
+                                    <Radio value="nao" label="Não" />
+                                </RadioGroup>
+                            </Box>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    gap: "1rem",
+                                    alignItems: "center",
+                                }}>
+                                <Typography>
+                                    Você tem parentesco com o susposto pai do examinando que se quer
+                                    determinar a paternidade?
+                                </Typography>
+                                <RadioGroup
+                                    defaultValue="-"
+                                    orientation="horizontal"
+                                    sx={{
+                                        gap: "0.5rem",
+                                    }}>
+                                    <Radio value="sim" label="Sim" />
+                                    <Radio value="nao" label="Não" />
+                                </RadioGroup>
+                            </Box>
+                        </Box>
+                        : <></>
+                    }
+
+
                     <Box
                         sx={{
                             width: "100%",
@@ -163,52 +227,40 @@ export default function NovaColeta() {
                             <Radio value="sim" label="Sim" />
                             <Radio value="nao" label="Não" />
                         </RadioGroup>
+                        
                     </Box>
+                    {type == "Filho(a)" ? 
                     <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "1rem",
-                            alignItems: "center",
-                        }}>
-                        <Typography sx={{ wordBreak: "break-all" }}>
-                            Algum parente biologico do susposto pai poderia ser eventualmente
-                            considerado como suposto pai do examinado que se quer determinar a
-                            paternidade?
-                        </Typography>
-                        <RadioGroup
-                            defaultValue="-"
-                            orientation="horizontal"
-                            sx={{
-                                gap: "0.5rem",
-                            }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
-                        </RadioGroup>
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "1rem",
+                        alignItems: "center",
+                    }}>
+                    <Typography>Dados do Responsável  </Typography>
+                    <Box sx={{ width: "100%", display: "flex", flexDirection: "row" }}>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }}>
+                                    <FormLabel>CPF</FormLabel>
+                                    <Input sx={{ width: "100%" }} placeholder="CPF..." />
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }}>
+                                    <FormLabel>Identidade</FormLabel>
+                                    <Input sx={{ width: "100%" }} placeholder="Identidade..." />
+                                </Box>
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "1rem",
-                            alignItems: "center",
-                        }}>
-                        <Typography>
-                            Você tem parentesco com o susposto pai do examinando que se quer
-                            determinar a paternidade?
-                        </Typography>
-                        <RadioGroup
-                            defaultValue="-"
-                            orientation="horizontal"
-                            sx={{
-                                gap: "0.5rem",
-                            }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
-                        </RadioGroup>
-                    </Box>
+                    
+                </Box> : <></>}
                     <Box
                         sx={{
                             width: "100%",
