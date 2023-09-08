@@ -18,6 +18,10 @@ export const ProcessModel = sequelize.define('PROCESSES', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    lastModified: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
     didBy: {
         type: DataTypes.STRING,
         allowNull: false,

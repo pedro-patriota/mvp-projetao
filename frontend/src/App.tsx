@@ -6,6 +6,7 @@ import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
 import NovaColeta from "./pages/app/Cadastro/Cadastro";
+import Coleta from "./pages/app/Coleta/Coleta";
 import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 import SequenciamentoLista from "./pages/app/SequenciamentoLista";
@@ -25,6 +26,7 @@ export default function FilesExample() {
                     <Route path="cadastro">
                         <Route path="nova-coleta" element={<NovaColeta />}></Route>
                         <Route path="" element={<HomeCadastro />}></Route>
+                        <Route path="coleta" element={<Coleta />}></Route>
                     </Route>
                     <Route
                       path="sequenciador-seletor"
