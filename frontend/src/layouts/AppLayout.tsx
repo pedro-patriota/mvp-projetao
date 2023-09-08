@@ -82,11 +82,14 @@ export default function AppLayout() {
                         <Link href="#basics" fontWeight="lg">
                             Novo Caso
                         </Link>
-                        <Link href="#basics" fontWeight="lg">
+                        <Link href="/app/analise-genotipica" fontWeight="lg">
                             Analise
                         </Link>
-                        <Link href="#basics" fontWeight="lg">
-                            Casos
+                        <Link href="/app/sequenciador-seletor" fontWeight="lg">
+                            Sequenciador Seletor
+                        </Link>
+                        <Link href="/app/sequenciador-lista" fontWeight="lg">
+                            Sequenciador Lista
                         </Link>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>

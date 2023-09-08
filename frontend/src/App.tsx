@@ -9,6 +9,7 @@ import NovaColeta from "./pages/app/Cadastro/Cadastro";
 import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 import SequenciamentoLista from "./pages/app/SequenciamentoLista";
+import GeneticMaping from "./pages/app/AnaliseGenotipica/GeneticMaping"
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,6 +34,10 @@ export default function FilesExample() {
                     <Route
                       path="sequenciador-lista"
                       element={<SequenciamentoLista />}
+                    ></Route>
+                    <Route
+                      path="analise-genotipica"
+                      element={<GeneticMaping />}
                     ></Route>
                 </Route>
             </Routes>
