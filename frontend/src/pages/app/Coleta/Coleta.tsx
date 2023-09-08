@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
-import { useLocation } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import "./Coleta.css"
 
 export default function Coleta() {
-    const location = useLocation()
+    const navigate = useNavigate();
 
     const [father, setFather] = useState("Pai")
     const [mother, setMother] = useState("Mãe")
@@ -17,6 +17,7 @@ export default function Coleta() {
         const date = new Date(currentTimestamp);
         return date.toLocaleString('pt-BR')
     }
+
 
     //timestamp provisório do pai 
     let tsmp = getTimestamp()
@@ -37,6 +38,12 @@ export default function Coleta() {
             updatedParents[parentIndex].timestamp = getTimestamp();
 
             setParents(updatedParents);
+
+            //Após todas as amostras serem coletadas navega-se para próxima etapa
+            const allCollected = updatedParents.every((parent) => parent.collected);
+            if(allCollected){
+                navigate("sequenciador-seletor");
+            }
         }
         
     }
