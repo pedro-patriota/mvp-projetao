@@ -6,12 +6,14 @@ import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
 import NovaColeta from "./pages/app/Cadastro/Cadastro";
-//import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
+import Coleta from "./pages/app/Coleta/Coleta";
+import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 import SequenciamentoLista from "./pages/app/SequenciamentoLista";
 import NotFound from "./pages/NotFound";
 //import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Analise from "./pages/app/Analise/Analise";
 
 export default function FilesExample() {
     return (
@@ -23,11 +25,14 @@ export default function FilesExample() {
                     <Route path = "signup" element = {<SignUp />}></Route>
                     <Route path = "*" element = {<NotFound />}></Route>
                 </Route>
-                <Route path = "app" element = {<AppLayout />}>
-                    <Route path = "casos" element = {<Casos />}></Route>
-                    <Route path = "cadastro">
-                        <Route path = "nova-coleta" element = {<NovaColeta />}></Route>
+                <Route path="app" element={<AppLayout />}>
+                    <Route path="casos" element={<Casos />}></Route>
+                    <Route path="cadastro">
+                        <Route path="nova-coleta" element={<NovaColeta />}></Route>
+                        <Route path="" element={<HomeCadastro />}></Route>
+                        <Route path="coleta" element={<Coleta />}></Route>
                     </Route>
+                    <Route path="analise" element={<Analise />}></Route>
                     <Route
                       path="sequenciador-seletor"
                       element = {<SequenciadorSeletor />}
