@@ -20,33 +20,7 @@ import Logo from "../components/Logo";
 
 import { useNavigate } from "react-router-dom";
 
-function ColorSchemeToggle() {
-    const { mode, setMode } = useColorScheme();
-    const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
-    if (!mounted) {
-        return <IconButton variant="soft" color="neutral" />;
-    }
-    return (
-        <IconButton
-            id="toggle-mode"
-            variant="soft"
-            color="neutral"
-            onClick={() => {
-                if (mode === "light") {
-                    setMode("dark");
-                } else {
-                    setMode("light");
-                }
-            }}>
-            {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-        </IconButton>
-    );
-}
-
-export default function HomeLayout() {
+export default function NotFound() {
     const navigate = useNavigate();
     return (
         <CssVarsProvider disableTransitionOnChange>

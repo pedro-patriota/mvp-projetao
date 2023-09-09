@@ -1,12 +1,12 @@
 import express from 'express'
-import * as PateintsController from '../controllers/PatientsController'
+import * as PatientsController from '../controllers/PatientsController'
 
 const PatientsRouter = express.Router()
 
-PatientsRouter.route('').post(PateintsController.CreatePatient)
-PatientsRouter.route('/all').get(PateintsController.GetAllPatients)
-PatientsRouter.route('').get(PateintsController.GetPatient)
-PatientsRouter.route('').put(PateintsController.UpdatePatient)
-PatientsRouter.route('').delete(PateintsController.DeletePatient)
+PatientsRouter.route('').post(PatientsController.CreatePatient)
+PatientsRouter.route('/all').get(PatientsController.GetAllPatients)
+PatientsRouter.route('').get(PatientsController.GetPatient)
+PatientsRouter.route('').put(PatientsController.UpdatePatient)
+PatientsRouter.route('').delete(PatientsController.DeletePatient)
 
 export default PatientsRouter

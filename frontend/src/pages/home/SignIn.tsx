@@ -48,7 +48,7 @@ export default function SignIn() {
                             theme: "light",
                         });
 
-                        //navigate("/singin");
+                        //navigate("/signin");
                     }
                 })
                 .catch(() => {
@@ -154,7 +154,7 @@ export default function SignIn() {
                         </Button>
                         <Typography color="neutral" fontSize="sm">
                             Caso não tenha conta, clique aqui para se{" "}
-                            <Link href="/singup">cadastrar</Link>
+                            <Link href="/signup">cadastrar</Link>
                         </Typography>
                     </Box>
                 </Box>
@@ -172,7 +172,7 @@ export default function SignIn() {
                     <img
                         src={SignInImage}
                         loading="lazy"
-                        alt="singin-image"
+                        alt="signin-image"
                         style={{ width: "28rem", objectFit: "cover" }}
                     />
                 </Box>
