@@ -12,6 +12,7 @@ import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 import SequenciamentoLista from "./pages/app/SequenciamentoLista";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Analise from "./pages/app/Analise/Analise";
 
 export default function FilesExample() {
     return (
@@ -28,6 +29,7 @@ export default function FilesExample() {
                         <Route path="" element={<HomeCadastro />}></Route>
                         <Route path="coleta" element={<Coleta />}></Route>
                     </Route>
+                    <Route path="analise" element={<Analise />}></Route>
                     <Route
                       path="sequenciador-seletor"
                       element={<SequenciadorSeletor />}
