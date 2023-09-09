@@ -14,16 +14,18 @@ import NotFound from "./pages/NotFound";
 //import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Analise from "./pages/app/Analise/Analise";
+import PaginaPacientes from "./pages/app/Pacientes/Pacientes";
+import Paciente from "./pages/app/Pacientes/Paciente";
 
 export default function FilesExample() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path = "home" element = { <Navigate to = "/"/> }></Route>
-                <Route path = "/" element = {<HomeLayout />} >
-                    <Route path = "signin" element = {<SignIn />}></Route>
-                    <Route path = "signup" element = {<SignUp />}></Route>
-                    <Route path = "*" element = {<NotFound />}></Route>
+                <Route path="home" element={<Navigate to="/" />}></Route>
+                <Route path="/" element={<HomeLayout />}>
+                    <Route path="signin" element={<SignIn />}></Route>
+                    <Route path="signup" element={<SignUp />}></Route>
+                    <Route path="*" element={<NotFound />}></Route>
                 </Route>
                 <Route path="app" element={<AppLayout />}>
                     <Route path="casos" element={<Casos />}></Route>
@@ -33,14 +35,10 @@ export default function FilesExample() {
                         <Route path="coleta" element={<Coleta />}></Route>
                     </Route>
                     <Route path="analise" element={<Analise />}></Route>
-                    <Route
-                      path="sequenciador-seletor"
-                      element = {<SequenciadorSeletor />}
-                    ></Route>
-                    <Route
-                      path = "sequenciador-lista"
-                      element = {<SequenciamentoLista />}
-                    ></Route>
+                    <Route path="sequenciador-seletor" element={<SequenciadorSeletor />}></Route>
+                    <Route path="sequenciador-lista" element={<SequenciamentoLista />}></Route>
+                    <Route path="pacientes" element={<PaginaPacientes></PaginaPacientes>}></Route>
+                    <Route path="paciente/:pacientCPF" element={<Paciente></Paciente>}></Route>
                 </Route>
             </Routes>
         </BrowserRouter>

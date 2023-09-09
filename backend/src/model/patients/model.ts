@@ -2,15 +2,11 @@ import { DataTypes } from 'sequelize'
 import { sequelize } from '../db'
 
 export const PatientsModel = sequelize.define('PATIENTS', {
-    id: {
+    cpf: {
         type: DataTypes.STRING,
         primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    cpf: {
         type: DataTypes.STRING,
         allowNull: false,
     },
