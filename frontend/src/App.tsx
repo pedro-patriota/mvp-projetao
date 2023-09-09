@@ -1,5 +1,5 @@
-import * as React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+//import * as React from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Casos from "./pages/app/Casos";
 import AppLayout from "./layouts/AppLayout";
 import SignIn from "./pages/home/SignIn";
@@ -10,7 +10,8 @@ import Coleta from "./pages/app/Coleta/Coleta";
 import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
 import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
 import SequenciamentoLista from "./pages/app/SequenciamentoLista";
-import { ToastContainer } from "react-toastify";
+import NotFound from "./pages/NotFound";
+//import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Analise from "./pages/app/Analise/Analise";
 
@@ -18,9 +19,11 @@ export default function FilesExample() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<HomeLayout />}>
-                    <Route path="singin" element={<SignIn />}></Route>
-                    <Route path="singup" element={<SignUp />}></Route>
+                <Route path = "home" element = { <Navigate to = "/"/> }></Route>
+                <Route path = "/" element = {<HomeLayout />} >
+                    <Route path = "signin" element = {<SignIn />}></Route>
+                    <Route path = "signup" element = {<SignUp />}></Route>
+                    <Route path = "*" element = {<NotFound />}></Route>
                 </Route>
                 <Route path="app" element={<AppLayout />}>
                     <Route path="casos" element={<Casos />}></Route>
@@ -32,11 +35,11 @@ export default function FilesExample() {
                     <Route path="analise" element={<Analise />}></Route>
                     <Route
                       path="sequenciador-seletor"
-                      element={<SequenciadorSeletor />}
+                      element = {<SequenciadorSeletor />}
                     ></Route>
                     <Route
-                      path="sequenciador-lista"
-                      element={<SequenciamentoLista />}
+                      path = "sequenciador-lista"
+                      element = {<SequenciamentoLista />}
                     ></Route>
                 </Route>
             </Routes>

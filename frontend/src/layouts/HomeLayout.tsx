@@ -18,6 +18,8 @@ import "./App.css";
 import Button from "@mui/joy/Button";
 import Logo from "../components/Logo";
 
+import { useNavigate } from "react-router-dom";
+
 function ColorSchemeToggle() {
     const { mode, setMode } = useColorScheme();
     const [mounted, setMounted] = React.useState(false);
@@ -45,6 +47,7 @@ function ColorSchemeToggle() {
 }
 
 export default function HomeLayout() {
+    const navigate = useNavigate();
     return (
         <CssVarsProvider disableTransitionOnChange>
             {/* <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
@@ -78,15 +81,19 @@ export default function HomeLayout() {
                         <Logo />
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 2.5 }}>
-                        <Link href="#basics">Home</Link>
-                        <Link href="#basics">Sobre</Link>
-                        <Link href="#basics">Acesso à informação</Link>
-                        <Link href="#basics">Suporte</Link>
+                        <Link href="/">Home</Link>
+                        <Link href="about">Sobre</Link>
+                        <Link href="info">Acesso à informação</Link>
+                        <Link href="suporte">Suporte</Link>
                     </Box>
 
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
-                        <Button variant="soft">Entrar</Button>
-                        <Button>Cadastrar</Button>
+                        <Button variant="soft" onClick = {() => navigate("/signin") }>
+                            Entrar
+                        </Button>
+                        <Button onClick = {() => navigate("/signup") }>
+                            Cadastrar
+                        </Button>
                     </Box>
                 </Box>
                 <Outlet></Outlet>

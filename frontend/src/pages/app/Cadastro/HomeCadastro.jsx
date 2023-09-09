@@ -117,7 +117,7 @@ export default function HomeCadastro() {
                     <img
                         src={SignInImage}
                         loading="lazy"
-                        alt="singin-image"
+                        alt="signin-image"
                         style={{ width: "28rem", objectFit: "cover" }}
                     />
                 </Box>

@@ -41,7 +41,7 @@ export default function SignUp() {
                             theme: "light",
                         });
 
-                        navigate("/singin");
+                        navigate("/signin");
                     }
                 })
                 .catch(() => {
@@ -89,7 +89,7 @@ export default function SignUp() {
                     <img
                         src={SignUpImage}
                         loading="lazy"
-                        alt="singin-image"
+                        alt="signin-image"
                         style={{ width: "28rem", objectFit: "cover" }}
                     />
                 </Box>
@@ -178,7 +178,7 @@ export default function SignUp() {
                                 }}></FormControl>
                         </Box>
                         <Typography color="neutral" fontSize="sm">
-                            Já tem um conta? clique aqui para <Link href="/singin">entrar</Link>
+                            Já tem um conta? clique aqui para <Link href="/signin">entrar</Link>
                         </Typography>
                     </Box>
                 </Box>
