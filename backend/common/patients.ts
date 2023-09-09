@@ -1,13 +1,12 @@
 import z from 'zod'
 
-export const PatientSexSchema = z.enum(['Male', 'Female'])
+export const PatientSexSchema = z.enum(['Masculino', 'Feminino'])
 
 export type PatientSex = z.infer<typeof PatientSexSchema>
 
 export const PatientSchema = z.object({
-    id: z.string(),
-    name: z.string(),
     cpf: z.string(),
+    name: z.string(),
     address: z.string(),
     phone: z.string(),
     sibling: z.boolean(),

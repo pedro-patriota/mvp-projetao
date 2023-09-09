@@ -5,23 +5,19 @@ import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
 export async function CreatePatient(request: Request, response: Response) {
-    const schema = PatientSchema.omit({ id: true })
-    const id = nanoid()
+    const schema = PatientSchema.omit({ cpf: true })
 
     const parsedPatient = schema.safeParse(request.body)
 
     if (parsedPatient.success) {
         const tempPatient: Patient = {
-            id,
             ...request.body,
             genes: JSON.stringify(request.body.genes),
         }
 
-        console.log(tempPatient)
-
         await PatientsModel.create(tempPatient)
             .then(() => {
-                response.status(201).send({ id })
+                response.status(201).send({ cpf: tempPatient.cpf })
             })
             .catch((e) => {
                 response.status(500).send(e)
@@ -32,13 +28,14 @@ export async function CreatePatient(request: Request, response: Response) {
 }
 
 export async function GetPatient(request: Request, response: Response) {
-    const parsedGet = z.object({ id: z.string() }).safeParse(request.query)
+    const parsedGet = z.object({ cpf: z.string() }).safeParse(request.query)
 
     if (parsedGet.success) {
-        await PatientsModel.findByPk((request.query as { id: string }).id)
+        await PatientsModel.findByPk((request.query as { cpf: string }).cpf)
             .then((patients) => {
                 if (patients === null) {
                     response.status(404).send()
+                    
                     return
                 }
 
@@ -74,7 +71,7 @@ export async function UpdatePatient(request: Request, response: Response) {
     if (parsedPatient.success) {
         const parsedBody = request.body as Patient
 
-        const result = await PatientsModel.update({ ...parsedBody, genes: JSON.stringify(request.body.genes) }, { where: { id: parsedBody.id } })
+        const result = await PatientsModel.update({ ...parsedBody, genes: JSON.stringify(request.body.genes) }, { where: { cpf: parsedBody.cpf } })
 
         if (result[0] === 0) {
             response.status(404).send()
@@ -90,12 +87,12 @@ export async function UpdatePatient(request: Request, response: Response) {
 }
 
 export async function DeletePatient(request: Request, response: Response) {
-    const parsedGet = z.object({ id: z.string() }).safeParse(request.body)
+    const parsedGet = z.object({ cpf: z.string() }).safeParse(request.body)
 
     if (parsedGet.success) {
         await PatientsModel.destroy({
             where: {
-                id: request.body.id,
+                cpf: request.body.cpf,
             },
         })
             .then((rowsAffected) => {

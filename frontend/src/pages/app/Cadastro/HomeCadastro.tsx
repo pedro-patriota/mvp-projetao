@@ -1,16 +1,14 @@
-import { Button, FormControl, FormLabel, Input, Link, Typography } from "@mui/joy";
+import { Button, FormControl, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import KeyIcon from "@mui/icons-material/Key";
 import React from "react";
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import SignInImage from "../../../assets/signin.svg";
-import Logo from "../../../components/Logo";
 
 export default function HomeCadastro() {
     const navigate = useNavigate();
-    const navigateTo = (variable) => {
-        navigate("nova-coleta", {state: {type: variable}});
+
+    const navigateTo = (variable: any) => {
+        navigate("nova-coleta", { state: { type: variable } });
     };
 
     return (
@@ -80,27 +78,29 @@ export default function HomeCadastro() {
                                 <Button
                                     sx={{
                                         width: "100%",
-                                        fontSize: "1.5rem", 
+                                        fontSize: "1.5rem",
                                     }}
-                                    onClick={() => navigateTo("Pai")}
-                                    >Pai</Button>
-                                <Button 
-                                    sx={{
-                                        width: "100%",
-                                        fontSize: "1.5rem", 
-                                    }}
-                                    onClick={() => navigateTo("Mãe")}
-                                    >Mãe</Button>
+                                    onClick={() => navigateTo("Pai")}>
+                                    Pai
+                                </Button>
                                 <Button
                                     sx={{
                                         width: "100%",
-                                        fontSize: "1.5rem", 
+                                        fontSize: "1.5rem",
                                     }}
-                                    onClick={() => navigateTo("Filho(a)")}
-                                    >Filho(a)</Button>
+                                    onClick={() => navigateTo("Mãe")}>
+                                    Mãe
+                                </Button>
+                                <Button
+                                    sx={{
+                                        width: "100%",
+                                        fontSize: "1.5rem",
+                                    }}
+                                    onClick={() => navigateTo("Filho(a)")}>
+                                    Filho(a)
+                                </Button>
                             </FormControl>
                         </Box>
-                        
                     </Box>
                 </Box>
                 <Box
