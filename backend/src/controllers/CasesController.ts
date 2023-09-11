@@ -8,7 +8,7 @@ export async function CreateCase(request: Request, response: Response) {
     const schema = CaseSchema.omit({ id: true })
     const id = nanoid()
 
-    const parsedCase = schema.safeParse({ ...request.body, processes: JSON.parse(request.body.processes) })
+    const parsedCase = schema.safeParse({ ...request.body, processes: request.body.processes })
 
     if (parsedCase.success) {
         const tempCase: Case = {

@@ -72,7 +72,7 @@ export async function GetProcess(request: Request, response: Response) {
     }
 }
 
-export async function GetAllProcesss(request: Request, response: Response) {
+export async function GetAllProcess(request: Request, response: Response) {
     await ProcessModel.findAll()
         .then((res) => {
             let Processs: Process[] = []
@@ -89,24 +89,30 @@ export async function GetAllProcesss(request: Request, response: Response) {
 }
 
 export async function UpdateProcess(request: Request, response: Response) {
-    const parsedProcess = ProcessSchema.safeParse(request.body)
+    const id = z.object({ id: z.string() }).safeParse(request.query)
 
-    if (parsedProcess.success) {
-        const parsedBody = request.body as Process
+    if (id.success) {
+        let body = request.body
 
-        const result = await ProcessModel.update({ ...parsedBody }, { where: { id: parsedBody.id } })
+        const parsedCase = ProcessSchema.partial().safeParse(body)
 
-        if (result[0] === 0) {
-            response.status(404).send()
-            return
+        if (parsedCase.success) {
+            let parsedBody = request.body
+
+            const result = await ProcessModel.update(parsedBody, { where: { id: request.query.id } })
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            response.status(400).send(parsedCase.error)
         }
-
-        response.status(200).send()
     } else {
-        response.status(400).send(parsedProcess.error)
+        response.status(400).send(id.error)
     }
-
-    return
 }
 
 export async function DeleteProcess(request: Request, response: Response) {

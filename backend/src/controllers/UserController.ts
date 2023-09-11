@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { User, UserSchema } from '../../common/user'
-import { UsersModel } from '../model/user/model'
+import { UserModel } from '../model/user/model'
 import { z } from 'zod'
 
 export async function CreateUser(request: Request, response: Response) {
@@ -9,7 +9,7 @@ export async function CreateUser(request: Request, response: Response) {
     if (parsedUser.success) {
         const tempUser: User = request.body
 
-        await UsersModel.create(tempUser)
+        await UserModel.create(tempUser)
             .then(() => {
                 response.status(201).send({ email: tempUser.email })
             })
@@ -25,7 +25,7 @@ export async function GetUser(request: Request, response: Response) {
     const parsedGet = z.object({ email: z.string().email() }).safeParse(request.query)
 
     if (parsedGet.success) {
-        await UsersModel.findByPk((request.query as { email: string }).email)
+        await UserModel.findByPk((request.query as { email: string }).email)
             .then((users) => {
                 if (users === null) {
                     response.status(404).send()
@@ -43,7 +43,7 @@ export async function GetUser(request: Request, response: Response) {
 }
 
 export async function GetAllUsers(request: Request, response: Response) {
-    await UsersModel.findAll()
+    await UserModel.findAll()
         .then((res) => {
             let patients: User[] = []
 
@@ -59,31 +59,37 @@ export async function GetAllUsers(request: Request, response: Response) {
 }
 
 export async function UpdateUser(request: Request, response: Response) {
-    const parsedUser = UserSchema.safeParse(request.body)
+    const idParse = z.object({ id: z.string() }).safeParse(request.query)
 
-    if (parsedUser.success) {
-        const parsedBody = request.body as User
+    if (idParse.success) {
+        let body = request.body
 
-        const result = await UsersModel.update({ ...parsedBody }, { where: { email: parsedBody.email } })
+        const parsedCase = UserSchema.partial().safeParse(body)
 
-        if (result[0] === 0) {
-            response.status(404).send()
-            return
+        if (parsedCase.success) {
+            let parsedBody = request.body
+
+            const result = await UserModel.update(parsedBody, { where: { id: request.query.id } })
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            response.status(400).send(parsedCase.error)
         }
-
-        response.status(200).send()
     } else {
-        response.status(400).send(parsedUser.error)
+        response.status(400).send(idParse.error)
     }
-
-    return
 }
 
 export async function DeleteUser(request: Request, response: Response) {
     const parsedGet = z.object({ email: z.string() }).safeParse(request.body)
 
     if (parsedGet.success) {
-        await UsersModel.destroy({
+        await UserModel.destroy({
             where: {
                 email: request.body.email,
             },
@@ -107,7 +113,7 @@ export async function LoginUser(request: Request, response: Response) {
     const parsedRequest = UserSchema.pick({ email: true, password: true }).safeParse(request.body)
 
     if (parsedRequest.success) {
-        await UsersModel.findByPk(parsedRequest.data.email)
+        await UserModel.findByPk(parsedRequest.data.email)
             .then((user) => {
                 if (user === null || parsedRequest.data.password !== (user as any as User).password) {
                     response.status(404).send()

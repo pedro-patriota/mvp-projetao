@@ -68,27 +68,46 @@ export async function GetAllSequencings(request: Request, response: Response) {
 }
 
 export async function UpdateSequencing(request: Request, response: Response) {
-    const parsedSequencing = SequencingSchema.safeParse(request.body)
+    const idParse = z.object({ id: z.string() }).safeParse(request.query)
 
-    if (parsedSequencing.success) {
-        const parsedBody = request.body as Sequencing
+    if (idParse.success) {
+        let body = request.body
 
-        const result = await SequencingModel.update(
-            { ...parsedBody, cases: JSON.stringify(request.body.cases), map: JSON.stringify(request.body.map) },
-            { where: { id: parsedBody.id } }
-        )
-
-        if (result[0] === 0) {
-            response.status(404).send()
-            return
+        if (body.map != undefined) {
+            body.map = JSON.parse(body.map)
         }
 
-        response.status(200).send()
-    } else {
-        response.status(400).send(parsedSequencing.error)
-    }
+        if (body.cases != undefined) {
+            body.cases = JSON.parse(body.cases)
+        }
 
-    return
+        const parsedCase = SequencingSchema.partial().safeParse(body)
+
+        if (parsedCase.success) {
+            let parsedBody = request.body
+
+            if (parsedBody.map != undefined) {
+                parsedBody.map = JSON.stringify(parsedBody.map)
+            }
+
+            if (parsedBody.cases != undefined) {
+                parsedBody.cases = JSON.stringify(parsedBody.cases)
+            }
+
+            const result = await SequencingModel.update(parsedBody, { where: { id: request.query.id } })
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            response.status(400).send(parsedCase.error)
+        }
+    } else {
+        response.status(400).send(idParse.error)
+    }
 }
 
 export async function DeleteSequencing(request: Request, response: Response) {
