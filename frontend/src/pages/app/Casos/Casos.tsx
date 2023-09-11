@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/joy/Box";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
-import Checkbox from "@mui/joy/Checkbox";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
@@ -17,41 +16,26 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { visuallyHidden } from "@mui/utils";
 import { Button } from "@mui/joy";
 import { Add } from "@mui/icons-material";
+import { Case, newCase } from "../../../../../backend/common/case";
+import { Patient } from "../../../../../backend/common/patients";
+import { Process } from "../../../../../backend/common/process";
+import { toast } from "react-toastify";
+import Barloader from "react-spinners/BarLoader";
+import { useNavigate } from "react-router-dom";
 
-interface Data {
-    id: string;
-    mae: string;
-    modificadoPor: string;
-    currentProcess: "PCR";
-    status: "PENDENTE" | "FAZENDO" | "FEITO";
-}
+const override: React.CSSProperties = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+};
 
-const rows: Data[] = [
-    {
-        id: "V1StGXR8_Z5jdHi6B-myT",
-        mae: "JOSE LUCAS DA COSTA SILVA",
-        modificadoPor: "JOSE LUCAS DA COSTA SILVA",
-        currentProcess: "PCR",
-        status: "PENDENTE",
-    },
-    {
-        id: "V1StGXR8_Z5jdHi6B-myp",
-        mae: "Costa",
-        modificadoPor: "Jose Lucas",
-        currentProcess: "PCR",
-        status: "FEITO",
-    },
-    {
-        id: "V1StGXR8_Z5jdHi6B-myl",
-        mae: "Costa",
-        modificadoPor: "Jose Lucas",
-        currentProcess: "PCR",
-        status: "FAZENDO",
-    },
-];
+type Data = Pick<
+    Case & { updatedAt: string; currentProcess: string; processStatus: string },
+    "id" | "motherId" | "updatedAt" | "currentProcess" | "processStatus"
+>;
 
 function labelDisplayedRows({ from, to, count }: { from: number; to: number; count: number }) {
-    return `${from}–${to} of ${count !== -1 ? count : `more than ${to}`}`;
+    return `${from}-${to} of ${count !== -1 ? count : `more than ${to}`}`;
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -104,14 +88,14 @@ const headCells: readonly HeadCell[] = [
         label: "ID",
     },
     {
-        id: "mae",
+        id: "motherId",
         numeric: false,
         label: "MÃE",
     },
     {
-        id: "modificadoPor",
+        id: "updatedAt",
         numeric: false,
-        label: "MODIFICADO POR",
+        label: "MODIFICADO EM",
     },
     {
         id: "currentProcess",
@@ -119,7 +103,7 @@ const headCells: readonly HeadCell[] = [
         label: "PROCESSO ATUAL",
     },
     {
-        id: "status",
+        id: "processStatus",
         numeric: false,
         label: "STATUS",
     },
@@ -195,11 +179,246 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
+interface CaseRowProps {
+    caseData: Data;
+}
+
+function CaseRow({ caseData }: CaseRowProps) {
+    const [motherData, setMotherData] = React.useState<Patient | undefined>(undefined);
+    const [currentProcessIndex, setCurrentProcessIndex] = React.useState<number | undefined>(
+        undefined
+    );
+    const caseProcesses = JSON.parse((caseData as any).processes) as Process[];
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        const loader = async () => {
+            await fetch("http://localhost:3000/patients?cpf=" + caseData.motherId, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(async (res) => {
+                    if (res.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        return;
+                    }
+
+                    await res
+                        .json()
+                        .then((response) => {
+                            setMotherData(response as Patient);
+                        })
+                        .catch(() => {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+                        });
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
+        };
+
+        for (let i = 0; i < caseProcesses.length; i++) {
+            if (caseProcesses[i].status === "FAZENDO") {
+                setCurrentProcessIndex(i);
+                break;
+            }
+        }
+
+        if (caseData.motherId != "") loader();
+    }, []);
+
+    return (
+        <tr
+            key={caseData.id}
+            onClick={() => navigate(`/app/caso/${caseData.id}`)} /* Go to Case page */
+            tabIndex={-1}
+            style={{
+                cursor: "pointer",
+            }}>
+            <th scope="row">{caseData.id}</th>
+            <td>
+                {caseData.motherId == "" ? (
+                    <Typography
+                        variant="solid"
+                        color="danger"
+                        sx={{ maxWidth: "max-content" }}
+                        fontWeight="lg">
+                        NÃO REGISTRADO
+                    </Typography>
+                ) : (
+                    <Typography>
+                        {motherData === undefined ? "CARREGANDO" : motherData.name}
+                    </Typography>
+                )}
+            </td>
+            <td>{new Date(caseData.updatedAt).toLocaleString()}</td>
+            <td>
+                <Typography>
+                    {currentProcessIndex === undefined
+                        ? "CARREGANDO"
+                        : caseProcesses[currentProcessIndex].name}
+                </Typography>
+            </td>
+            <td>
+                {currentProcessIndex === undefined ? (
+                    <Typography variant="soft" sx={{ width: "max-content" }}>
+                        CARREGANDO
+                    </Typography>
+                ) : (
+                    <Typography
+                        variant="solid"
+                        color={
+                            (caseProcesses[currentProcessIndex].status as any) === "FEITO"
+                                ? "success"
+                                : (caseProcesses[currentProcessIndex].status as any) === "FAZENDO"
+                                ? "primary"
+                                : "danger"
+                        }
+                        level="title-sm"
+                        sx={{
+                            maxWidth: "max-content",
+                            paddingX: "0.500rem",
+                        }}>
+                        {caseProcesses[currentProcessIndex].status}
+                    </Typography>
+                )}
+            </td>
+        </tr>
+    );
+}
+
 export default function Casos() {
     const [order, setOrder] = React.useState<Order>("asc");
     const [orderBy, setOrderBy] = React.useState<keyof Data>("id");
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [casesData, setCasesData] = React.useState<Data[] | undefined>(undefined);
+    const [loading, setLoading] = React.useState<boolean>(true);
+
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        const loader = async () => {
+            await fetch("http://localhost:3000/cases/all", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(async (res) => {
+                    if (res.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        return;
+                    }
+
+                    await res
+                        .json()
+                        .then((response) => {
+                            setCasesData(response as Data[]);
+                            setLoading(false);
+                        })
+                        .catch(() => {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+                        });
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
+        };
+
+        loader();
+    }, []);
+
+    const createNewCase = async () => {
+        const allProcesses = await fetch("http://localhost:3000/processes/case-process", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(async (res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return undefined;
+                }
+
+                return await res
+                    .json()
+                    .then((response: string[]) => response)
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        return undefined;
+                    });
+            })
+            .catch(() => {
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+
+                return undefined;
+            });
+
+        if (allProcesses === undefined) return;
+
+        const tempCase = newCase({ processes: allProcesses });
+
+        await fetch("http://localhost:3000/cases", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(tempCase),
+        })
+            .then(async (res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                navigate(`/app/caso/${tempCase.id}`);
+            })
+            .catch(() => {
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+            });
+    };
 
     const handleRequestSort = (_: React.MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === "asc";
@@ -216,15 +435,56 @@ export default function Casos() {
         setPage(0);
     };
 
+    if (loading == true || casesData == undefined) {
+        return (
+            <Box
+                sx={{
+                    width: "100%",
+                    flexGrow: 1,
+                    flex: 1,
+                    display: "flex",
+                    justifyContent: "center",
+                    paddingY: "1rem",
+                    alignItems: "center",
+                }}>
+                <Box
+                    sx={{
+                        width: "90%",
+                        height: "100%",
+                        overflowY: "auto",
+                        borderWidth: "1px",
+                        borderStyle: "solid",
+                        borderColor: "#d1d5db",
+                        boxShadow:
+                            "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                        padding: "2rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                    }}>
+                    <Barloader
+                        color="#0B6BCB"
+                        loading={loading}
+                        cssOverride={override}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
+                </Box>
+            </Box>
+        );
+    }
+
     const getLabelDisplayedRowsTo = () => {
-        if (rows.length === -1) {
+        if (casesData.length === -1) {
             return (page + 1) * rowsPerPage;
         }
-        return rowsPerPage === -1 ? rows.length : Math.min(rows.length, (page + 1) * rowsPerPage);
+        return rowsPerPage === -1
+            ? casesData.length
+            : Math.min(casesData.length, (page + 1) * rowsPerPage);
     };
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - casesData.length) : 0;
 
     return (
         <Box
@@ -267,7 +527,11 @@ export default function Casos() {
                         Casos
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: "1rem" }}>
-                        <Button size="sm" startDecorator={<Add />} sx={{ whiteSpace: "nowrap" }}>
+                        <Button
+                            size="sm"
+                            startDecorator={<Add />}
+                            sx={{ whiteSpace: "nowrap" }}
+                            onClick={() => createNewCase()}>
                             Novo caso
                         </Button>
                         <Tooltip title="Filtrar lista">
@@ -306,45 +570,10 @@ export default function Casos() {
                         onRequestSort={handleRequestSort}
                     />
                     <tbody>
-                        {stableSort(rows, getComparator(order, orderBy))
+                        {stableSort(casesData, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row) => {
-                                return (
-                                    <tr
-                                        onClick={() => 1} /* Go to Case page */
-                                        tabIndex={-1}
-                                        key={row.id}
-                                        style={{
-                                            cursor: "pointer",
-                                        }}>
-                                        <th scope="row">{row.id}</th>
-                                        <td>{row.mae}</td>
-                                        <td>{row.modificadoPor}</td>
-                                        <td>
-                                            <span style={{ fontWeight: "800" }}>
-                                                {row.currentProcess}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <Typography
-                                                variant="solid"
-                                                color={
-                                                    row.status === "FEITO"
-                                                        ? "success"
-                                                        : row.status === "FAZENDO"
-                                                        ? "primary"
-                                                        : "danger"
-                                                }
-                                                level="title-sm"
-                                                sx={{
-                                                    maxWidth: "max-content",
-                                                    paddingX: "0.500rem",
-                                                }}>
-                                                {row.status}
-                                            </Typography>
-                                        </td>
-                                    </tr>
-                                );
+                                return <CaseRow caseData={row} />;
                             })}
                         {emptyRows > 0 && (
                             <tr
@@ -380,9 +609,10 @@ export default function Casos() {
                                     </FormControl>
                                     <Typography textAlign="center" sx={{ minWidth: 80 }}>
                                         {labelDisplayedRows({
-                                            from: rows.length === 0 ? 0 : page * rowsPerPage + 1,
+                                            from:
+                                                casesData.length === 0 ? 0 : page * rowsPerPage + 1,
                                             to: getLabelDisplayedRowsTo(),
-                                            count: rows.length === -1 ? -1 : rows.length,
+                                            count: casesData.length === -1 ? -1 : casesData.length,
                                         })}
                                     </Typography>
                                     <Box sx={{ display: "flex", gap: 1 }}>
@@ -400,9 +630,9 @@ export default function Casos() {
                                             color="neutral"
                                             variant="outlined"
                                             disabled={
-                                                rows.length !== -1
+                                                casesData.length !== -1
                                                     ? page >=
-                                                      Math.ceil(rows.length / rowsPerPage) - 1
+                                                      Math.ceil(casesData.length / rowsPerPage) - 1
                                                     : false
                                             }
                                             onClick={() => handleChangePage(page + 1)}

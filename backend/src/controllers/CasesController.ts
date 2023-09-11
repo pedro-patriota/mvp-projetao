@@ -8,7 +8,7 @@ export async function CreateCase(request: Request, response: Response) {
     const schema = CaseSchema.omit({ id: true })
     const id = nanoid()
 
-    const parsedCase = schema.safeParse(request.body)
+    const parsedCase = schema.safeParse({ ...request.body, processes: JSON.parse(request.body.processes) })
 
     if (parsedCase.success) {
         const tempCase: Case = {
@@ -67,24 +67,38 @@ export async function GetAllCases(request: Request, response: Response) {
 }
 
 export async function UpdateCase(request: Request, response: Response) {
-    const parsedCase = CaseSchema.safeParse(request.body)
+    const idParse = z.object({ id: z.string() }).safeParse(request.query)
 
-    if (parsedCase.success) {
-        const parsedBody = request.body as Case
+    if (idParse.success) {
+        let body = request.body
 
-        const result = await CaseModel.update({ ...parsedBody, processes: JSON.stringify(parsedBody.processes) }, { where: { id: parsedBody.id } })
-
-        if (result[0] === 0) {
-            response.status(404).send()
-            return
+        if (body.processes != undefined) {
+            body.processes = JSON.parse(body.processes)
         }
 
-        response.status(200).send()
-    } else {
-        response.status(400).send(parsedCase.error)
-    }
+        const parsedCase = CaseSchema.partial().safeParse(body)
 
-    return
+        if (parsedCase.success) {
+            let parsedBody = request.body
+
+            if (parsedBody.processes != undefined) {
+                parsedBody.processes = JSON.stringify(parsedBody.processes)
+            }
+
+            const result = await CaseModel.update(parsedBody, { where: { id: request.query.id } })
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            response.status(400).send(parsedCase.error)
+        }
+    } else {
+        response.status(400).send(idParse.error)
+    }
 }
 
 export async function DeleteCase(request: Request, response: Response) {

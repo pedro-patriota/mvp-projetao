@@ -2,15 +2,7 @@ import { DataTypes } from 'sequelize'
 import { sequelize } from '../db'
 
 export const PatientsModel = sequelize.define('PATIENTS', {
-    cpf: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-    },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    address: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -18,24 +10,72 @@ export const PatientsModel = sequelize.define('PATIENTS', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    sibling: {
-        type: DataTypes.BOOLEAN,
+    naturality: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
-    transplante: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
+    cpf: {
+        type: DataTypes.STRING,
+        primaryKey: true,
     },
-    transfusao: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
+    rg: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    rgOrgao: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    rgUF: {
+        type: DataTypes.STRING,
+        primaryKey: true,
     },
     gender: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    age: {
-        type: DataTypes.INTEGER,
+    address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    city: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    bairro: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    addressUF: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    addressCEP: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    testemunha: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    parenteBiologicoPai: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    parentescoPai: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    irmaoGemeo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    transplanteMedula: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    transfusaoSangue: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
     genes: {

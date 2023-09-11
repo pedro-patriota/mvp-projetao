@@ -1,8 +1,7 @@
-import { Box, Stack, Typography } from "@mui/joy";
+import { Box, Typography } from "@mui/joy";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Barloader from "react-spinners/Barloader";
 import { Patient } from "../../../../../backend/common/patients";
 import {
     Bloodtype,
@@ -13,6 +12,8 @@ import {
     Person,
     VolunteerActivism,
 } from "@mui/icons-material";
+import Barloader from "react-spinners/BarLoader";
+
 const override: React.CSSProperties = {
     display: "block",
     margin: "0 auto",
