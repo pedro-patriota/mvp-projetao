@@ -2,7 +2,6 @@ import * as React from "react";
 import Box from "@mui/joy/Box";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
-import Checkbox from "@mui/joy/Checkbox";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
@@ -15,11 +14,10 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { visuallyHidden } from "@mui/utils";
-import { Button } from "@mui/joy";
-import { Add } from "@mui/icons-material";
 import { Patient } from "../../../../../backend/common/patients";
 import { toast } from "react-toastify";
-import Barloader from "react-spinners/Barloader";
+import { useNavigate } from "react-router-dom";
+import Barloader from "react-spinners/BarLoader";
 const override: React.CSSProperties = {
     display: "block",
     margin: "0 auto",
@@ -177,6 +175,8 @@ export default function PaginaPacientes() {
     const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
     const [patientData, setPatientData] = React.useState<Data[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
+
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         setLoading(true);
@@ -338,7 +338,9 @@ export default function PaginaPacientes() {
                                     .map((row) => {
                                         return (
                                             <tr
-                                                onClick={() => 1} /* Go to Case page */
+                                                onClick={() =>
+                                                    navigate(`/app/paciente/${row.cpf}`)
+                                                } /* Go to Case page */
                                                 tabIndex={-1}
                                                 key={row.cpf}
                                                 style={{

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { PatientsModel } from '../model/patients/model'
 import { Patient, PatientSchema } from '../../common/patients'
-import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
 export async function CreatePatient(request: Request, response: Response) {
@@ -35,7 +34,7 @@ export async function GetPatient(request: Request, response: Response) {
             .then((patients) => {
                 if (patients === null) {
                     response.status(404).send()
-                    
+
                     return
                 }
 

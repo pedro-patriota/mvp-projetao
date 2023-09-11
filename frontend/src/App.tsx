@@ -1,21 +1,21 @@
 //import * as React from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Casos from "./pages/app/Casos";
+import Casos from "./pages/app/Casos/Casos";
 import AppLayout from "./layouts/AppLayout";
 import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
-import NovaColeta from "./pages/app/Cadastro/Cadastro";
 import Coleta from "./pages/app/Coleta/Coleta";
-import HomeCadastro from "./pages/app/Cadastro/HomeCadastro";
-import SequenciadorSeletor from "./pages/app/SequenciadorSeletor";
-import SequenciamentoLista from "./pages/app/SequenciamentoLista";
+import SequenciadorSeletor from "./pages/app/Sequenciamento/SequenciadorSeletor";
+import SequenciamentoLista from "./pages/app/Sequenciamento/SequenciamentoLista";
 import NotFound from "./pages/NotFound";
 //import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Analise from "./pages/app/Analise/Analise";
 import PaginaPacientes from "./pages/app/Pacientes/Pacientes";
 import Paciente from "./pages/app/Pacientes/Paciente";
+import Caso from "./pages/app/Casos/Caso";
+import Cadastro from "./pages/app/Cadastro/Cadastro";
 
 export default function FilesExample() {
     return (
@@ -29,11 +29,8 @@ export default function FilesExample() {
                 </Route>
                 <Route path="app" element={<AppLayout />}>
                     <Route path="casos" element={<Casos />}></Route>
-                    <Route path="cadastro">
-                        <Route path="nova-coleta" element={<NovaColeta />}></Route>
-                        <Route path="" element={<HomeCadastro />}></Route>
-                        <Route path="coleta" element={<Coleta />}></Route>
-                    </Route>
+                    <Route path="caso/:id" element={<Caso />}></Route>
+                    <Route path="cadastro/:casoId/:step" element={<Cadastro />}></Route>
                     <Route path="analise" element={<Analise />}></Route>
                     <Route path="sequenciador-seletor" element={<SequenciadorSeletor />}></Route>
                     <Route path="sequenciador-lista" element={<SequenciamentoLista />}></Route>

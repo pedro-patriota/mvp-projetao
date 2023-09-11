@@ -73,19 +73,19 @@ export default function AppLayout() {
                         <Logo />
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 2.5 }}>
-                        <Link href="app/dashboard" fontWeight="lg">
-                            Dashboard
+                        <Link href="/app/pacientes" fontWeight="lg">
+                            Pacientes
                         </Link>
-                        <Link href="/app/cadastro" fontWeight="lg">
-                            Cadastro
+                        <Link href="/app/casos" fontWeight="lg">
+                            Casos
                         </Link>
-                        <Link href="app/novocaso" fontWeight="lg">
-                            Novo Caso
+                        <Link href="/app/sequenciamento" fontWeight="lg">
+                            Sequenciamentos
                         </Link>
-                        <Link href="app/analise" fontWeight="lg">
+                        <Link href="/app/analise" fontWeight="lg">
                             Analise
                         </Link>
-                        <Link href="app/casos" fontWeight="lg">
+                        <Link href="/app/casos" fontWeight="lg">
                             Casos
                         </Link>
                     </Box>

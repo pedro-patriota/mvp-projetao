@@ -1,20 +1,238 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/joy/Box";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import { Button, Input, Radio, RadioGroup, Typography } from "@mui/joy";
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from "react-router-dom";
+import { PatientSchema, PatientSex, newPatient } from "../../../../../backend/common/patients";
+import { toast } from "react-toastify";
+import { Case } from "../../../../../backend/common/case";
 
+export default function Cadastro() {
+    const { casoId, step } = useParams();
+    const [caseData, setCaseData] = useState<Case | undefined>(undefined);
 
-export default function NovaColeta() {
-    const location = useLocation()
+    const [name, setName] = useState<string>("Jose Lucas");
+    const [phone, setPhone] = useState<string>("40028922");
+    const [naturality, setNaturality] = useState<string>("Brasileira");
+    const [cpf, setCpf] = useState<string>("9999999999");
+    const [rg, setRg] = useState<string>("9999999999");
+    const [rgOrgao, setRgOrgao] = useState<string>("SDS");
+    const [rgUF, setRgUf] = useState<string>("PE");
+    const [gender, setGender] = useState<PatientSex>("Masculino");
+    const [address, setAddress] = useState<string>("RUA LEGAL");
+    const [city, setCity] = useState<string>("RECIFE");
+    const [bairro, setBairro] = useState<string>("ASDOSKD");
+    const [addressUF, setAddressUF] = useState<string>("PE");
+    const [addressCEP, setAddressCEP] = useState<string>("12344567");
+    const [testemunha, setTestemunha] = useState<string>("false");
+    const [parenteBiologicoPai, setParenteBiologicoPai] = useState<string>("false");
+    const [parentescoPai, setParentescoPai] = useState<string>("false");
+    const [irmaoGemeo, setIrmaoGemeo] = useState<string>("false");
+    const [transplanteMedula, setTransplanteMedula] = useState<string>("false");
+    const [transfusaoSangue, setTranfusaoSangue] = useState<string>("false");
 
-    var type = location.state.type; // "mae", "pai" ou "filho"
+    useEffect(() => {
+        const loader = async () => {
+            await fetch("http://localhost:3000/cases?id=" + casoId, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }).then(async (res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
 
-    // make it change mae to Mae and so on
-    type = type.charAt(0).toUpperCase() + type.slice(1);
+                    return;
+                }
 
-    
+                await res
+                    .json()
+                    .then((response: Case) => {
+                        setCaseData(response);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            });
+        };
+
+        loader();
+    }, []);
+
+    const navigate = useNavigate();
+
+    const handleNextStep = async () => {
+        const patient = newPatient({
+            cpf,
+            name,
+            phone,
+            naturality,
+            rg,
+            rgOrgao,
+            rgUF,
+            gender,
+            address,
+            city,
+            bairro,
+            addressUF,
+            addressCEP,
+            testemunha,
+            parenteBiologicoPai,
+            parentescoPai,
+            irmaoGemeo,
+            transplanteMedula,
+            transfusaoSangue,
+        });
+
+        const parse = PatientSchema.safeParse(patient);
+
+        if (parse.success) {
+            if (caseData == undefined) {
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+
+                return;
+            }
+
+            await fetch("http://localhost:3000/patients", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(patient),
+            })
+                .then(async (res) => {
+                    if (res.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        return;
+                    }
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
+
+            if (step == "mother") {
+                const updateCase: Case = { ...caseData, motherId: patient.cpf } as Case;
+
+                await fetch("http://localhost:3000/cases", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updateCase),
+                })
+                    .then((res) => {
+                        console.log(res);
+                        return res.json();
+                    })
+                    .then(async (res) => {
+                        console.log(res);
+
+                        if (res.status != 200) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                window.location.replace(`/app/cadastro/${casoId}/son`);
+            } else if (step == "son") {
+                const updateCase: Case = { ...caseData, sonId: patient.cpf } as Case;
+
+                await fetch("http://localhost:3000/cases", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updateCase),
+                })
+                    .then((res) => {
+                        console.log(res);
+                        return res.json();
+                    })
+                    .then(async (res) => {
+                        console.log(res);
+                        if (res.status != 200) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                window.location.replace(`/app/cadastro/${casoId}/father`);
+            } else {
+                const updateCase: Case = { ...caseData, fatherId: patient.cpf } as Case;
+
+                await fetch("http://localhost:3000/cases", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ ...caseData, fatherId: patient.cpf } as Case),
+                })
+                    .then((res) => {
+                        console.log(res);
+                        return res.json();
+                    })
+                    .then(async (res) => {
+                        console.log(res);
+                        if (res.status != 200) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                window.location.replace(`/app/caso/${casoId}`);
+            }
+        } else {
+            toast.error("Preencha os campos corretamente", {
+                position: "bottom-center",
+                theme: "light",
+            });
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -41,14 +259,16 @@ export default function NovaColeta() {
                     gap: "1rem",
                     overflowY: "auto",
                 }}>
-                <FormControl
+                <Box
                     sx={{
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
                         gap: "0.5rem",
                     }}>
-                    <Typography level="h1">{type}</Typography>
+                    <Typography level="h1">
+                        Cadastro {step == "mother" ? "Mãe" : step == "father" ? "Pai" : "Filho"}
+                    </Typography>
                     <Box sx={{ width: "100%", display: "flex", flexDirection: "row", gap: "10px" }}>
                         <Box
                             sx={{
@@ -58,15 +278,40 @@ export default function NovaColeta() {
                                 gap: "0.5rem",
                             }}>
                             <FormLabel>Nome</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Nome..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Nome..."
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                            />
                             <FormLabel>Telefone</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Telefone..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Telefone..."
+                                value={phone}
+                                onChange={(event) => setPhone(event.target.value)}
+                            />
                             <FormLabel>Naturalidade</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Naturalidade..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Naturalidade..."
+                                value={naturality}
+                                onChange={(event) => setNaturality(event.target.value)}
+                            />
                             <FormLabel>CPF</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="CPF..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="CPF..."
+                                value={cpf}
+                                onChange={(event) => setCpf(event.target.value)}
+                            />
                             <FormLabel>Identidade</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Identidade..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Identidade..."
+                                value={rg}
+                                onChange={(event) => setRg(event.target.value)}
+                            />
                             <Box sx={{ width: "100%", display: "flex", flexDirection: "row" }}>
                                 <Box
                                     sx={{
@@ -75,7 +320,12 @@ export default function NovaColeta() {
                                         flexDirection: "column",
                                     }}>
                                     <FormLabel>Orgão</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="Email..." />
+                                    <Input
+                                        sx={{ width: "100%" }}
+                                        placeholder="RG Orgão.."
+                                        value={rgOrgao}
+                                        onChange={(event) => setRgOrgao(event.target.value)}
+                                    />
                                 </Box>
                                 <Box
                                     sx={{
@@ -84,7 +334,12 @@ export default function NovaColeta() {
                                         flexDirection: "column",
                                     }}>
                                     <FormLabel>UF</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="Email..." />
+                                    <Input
+                                        sx={{ width: "100%" }}
+                                        placeholder="RG UF..."
+                                        value={rgUF}
+                                        onChange={(event) => setRgUf(event.target.value)}
+                                    />
                                 </Box>
                             </Box>
                         </Box>
@@ -95,24 +350,38 @@ export default function NovaColeta() {
                                 flexDirection: "column",
                                 gap: "0.5rem",
                             }}>
-                            <FormLabel>Status do individuo</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Status..." />
                             <FormLabel>Sexo</FormLabel>
                             <RadioGroup
-                                defaultValue="-"
+                                value={gender}
                                 orientation="horizontal"
                                 sx={{
                                     gap: "0.5rem",
-                                }}>
-                                <Radio value="sim" label="Masculino" />
-                                <Radio value="nao" label="Feminino" />
+                                }}
+                                onChange={(event) => setGender(event.target.value as PatientSex)}>
+                                <Radio value="Masculino" label="Masculino" />
+                                <Radio value="Feminino" label="Feminino" />
                             </RadioGroup>
                             <FormLabel>Endereço</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Endereço..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Endereço..."
+                                value={address}
+                                onChange={(event) => setAddress(event.target.value)}
+                            />
                             <FormLabel>Municipio</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Município..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Município..."
+                                value={city}
+                                onChange={(event) => setCity(event.target.value)}
+                            />
                             <FormLabel>Bairro</FormLabel>
-                            <Input sx={{ width: "100%" }} placeholder="Bairro..." />
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Bairro..."
+                                value={bairro}
+                                onChange={(event) => setBairro(event.target.value)}
+                            />
                             <Box sx={{ width: "100%", display: "flex", flexDirection: "row" }}>
                                 <Box
                                     sx={{
@@ -121,7 +390,12 @@ export default function NovaColeta() {
                                         flexDirection: "column",
                                     }}>
                                     <FormLabel>UF</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="UF..." />
+                                    <Input
+                                        sx={{ width: "100%" }}
+                                        placeholder="Bairro UF..."
+                                        value={addressUF}
+                                        onChange={(event) => setAddressUF(event.target.value)}
+                                    />
                                 </Box>
                                 <Box
                                     sx={{
@@ -130,86 +404,88 @@ export default function NovaColeta() {
                                         flexDirection: "column",
                                     }}>
                                     <FormLabel>CEP</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="CEP..." />
+                                    <Input
+                                        sx={{ width: "100%" }}
+                                        placeholder="Bairro CEP..."
+                                        value={addressCEP}
+                                        onChange={(event) => setAddressCEP(event.target.value)}
+                                    />
                                 </Box>
                             </Box>
                         </Box>
                     </Box>
-                    {type == "Mãe" ?
-                        <Box>
-
-                            <Box
+                    <Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "1rem",
+                                alignItems: "center",
+                            }}>
+                            <Typography>
+                                Você testemunhou a coleta das amostras biologicas do suposto pai do
+                                individuo que se quer determinar a paternidade?
+                            </Typography>
+                            <RadioGroup
+                                value={testemunha}
+                                onChange={(event) => setTestemunha(event.target.value)}
+                                orientation="horizontal"
                                 sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: "1rem",
-                                    alignItems: "center",
+                                    gap: "0.5rem",
                                 }}>
-                                <Typography>
-                                    Você testemunhou a coleta das amostras biologicas do suposto pai do
-                                    individuo que se quer determinar a paternidade?
-                                </Typography>
-                                <RadioGroup
-                                    defaultValue="-"
-                                    orientation="horizontal"
-                                    sx={{
-                                        gap: "0.5rem",
-                                    }}>
-                                    <Radio value="sim" label="Sim" />
-                                    <Radio value="nao" label="Não" />
-                                </RadioGroup>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: "1rem",
-                                    alignItems: "center",
-                                }}>
-                                <Typography>
-                                    Algum parente biologico do susposto pai poderia ser eventualmente
-                                    considerado como suposto pai do examinado que se quer determinar a
-                                    paternidade?
-                                </Typography>
-                                <RadioGroup
-                                    defaultValue="-"
-                                    orientation="horizontal"
-                                    sx={{
-                                        gap: "0.5rem",
-                                    }}>
-                                    <Radio value="sim" label="Sim" />
-                                    <Radio value="nao" label="Não" />
-                                </RadioGroup>
-                            </Box>
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    gap: "1rem",
-                                    alignItems: "center",
-                                }}>
-                                <Typography>
-                                    Você tem parentesco com o susposto pai do examinando que se quer
-                                    determinar a paternidade?
-                                </Typography>
-                                <RadioGroup
-                                    defaultValue="-"
-                                    orientation="horizontal"
-                                    sx={{
-                                        gap: "0.5rem",
-                                    }}>
-                                    <Radio value="sim" label="Sim" />
-                                    <Radio value="nao" label="Não" />
-                                </RadioGroup>
-                            </Box>
+                                <Radio value="true" label="Sim" />
+                                <Radio value="false" label="Não" />
+                            </RadioGroup>
                         </Box>
-                        : <></>
-                    }
-
-
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "1rem",
+                                alignItems: "center",
+                            }}>
+                            <Typography>
+                                Algum parente biologico do susposto pai poderia ser eventualmente
+                                considerado como suposto pai do examinado que se quer determinar a
+                                paternidade?
+                            </Typography>
+                            <RadioGroup
+                                value={parenteBiologicoPai}
+                                onChange={(event) => setParenteBiologicoPai(event.target.value)}
+                                orientation="horizontal"
+                                sx={{
+                                    gap: "0.5rem",
+                                }}>
+                                <Radio value="true" label="Sim" />
+                                <Radio value="false" label="Não" />
+                            </RadioGroup>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "row",
+                                gap: "1rem",
+                                alignItems: "center",
+                            }}>
+                            <Typography>
+                                Você tem parentesco com o susposto pai do examinando que se quer
+                                determinar a paternidade?
+                            </Typography>
+                            <RadioGroup
+                                value={parentescoPai}
+                                onChange={(event) => setParentescoPai(event.target.value)}
+                                orientation="horizontal"
+                                sx={{
+                                    gap: "0.5rem",
+                                }}>
+                                <Radio value="true" label="Sim" />
+                                <Radio value="false" label="Não" />
+                            </RadioGroup>
+                        </Box>
+                    </Box>
                     <Box
                         sx={{
                             width: "100%",
@@ -220,48 +496,16 @@ export default function NovaColeta() {
                         }}>
                         <Typography>Você tem irmão gêmeo?</Typography>
                         <RadioGroup
-                            defaultValue="-"
+                            value={irmaoGemeo}
+                            onChange={(event) => setIrmaoGemeo(event.target.value)}
                             orientation="horizontal"
                             sx={{
                                 gap: "0.5rem",
                             }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
+                            <Radio value="true" label="Sim" />
+                            <Radio value="false" label="Não" />
                         </RadioGroup>
-                        
                     </Box>
-                    {type == "Filho(a)" ? 
-                    <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "1rem",
-                        alignItems: "center",
-                    }}>
-                    <Typography>Dados do Responsável  </Typography>
-                    <Box sx={{ width: "100%", display: "flex", flexDirection: "row" }}>
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                    }}>
-                                    <FormLabel>CPF</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="CPF..." />
-                                </Box>
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                    }}>
-                                    <FormLabel>Identidade</FormLabel>
-                                    <Input sx={{ width: "100%" }} placeholder="Identidade..." />
-                                </Box>
-                    </Box>
-                    
-                </Box> : <></>}
                     <Box
                         sx={{
                             width: "100%",
@@ -272,23 +516,25 @@ export default function NovaColeta() {
                         }}>
                         <Typography>Transplante de medula?</Typography>
                         <RadioGroup
-                            defaultValue="-"
+                            value={transplanteMedula}
+                            onChange={(event) => setTransplanteMedula(event.target.value)}
                             orientation="horizontal"
                             sx={{
                                 gap: "0.5rem",
                             }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
+                            <Radio value="true" label="Sim" />
+                            <Radio value="false" label="Não" />
                         </RadioGroup>
                         <Typography>Transfusão de sangue?</Typography>
                         <RadioGroup
-                            defaultValue="-"
+                            value={transfusaoSangue}
+                            onChange={(event) => setTranfusaoSangue(event.target.value)}
                             orientation="horizontal"
                             sx={{
                                 gap: "0.5rem",
                             }}>
-                            <Radio value="sim" label="Sim" />
-                            <Radio value="nao" label="Não" />
+                            <Radio value="true" label="Sim" />
+                            <Radio value="false" label="Não" />
                         </RadioGroup>
                     </Box>
                     <Box
@@ -298,10 +544,9 @@ export default function NovaColeta() {
                             flexDirection: "row",
                             gap: "1rem",
                         }}>
-                        <Button variant="soft">Limpar</Button>
-                        <Button>Finalizar</Button>
+                        <Button onClick={() => handleNextStep()}>Finalizar</Button>
                     </Box>
-                </FormControl>
+                </Box>
             </Box>
         </Box>
     );
