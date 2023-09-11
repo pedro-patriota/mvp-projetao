@@ -65,24 +65,38 @@ export async function GetAllPatients(request: Request, response: Response) {
 }
 
 export async function UpdatePatient(request: Request, response: Response) {
-    const parsedPatient = PatientSchema.safeParse(request.body)
+    const cpfParse = z.object({ cpf: z.string() }).safeParse(request.query)
 
-    if (parsedPatient.success) {
-        const parsedBody = request.body as Patient
+    if (cpfParse.success) {
+        let body = request.body
 
-        const result = await PatientsModel.update({ ...parsedBody, genes: JSON.stringify(request.body.genes) }, { where: { cpf: parsedBody.cpf } })
-
-        if (result[0] === 0) {
-            response.status(404).send()
-            return
+        if (body.genes != undefined) {
+            body.genes = JSON.parse(body.genes)
         }
 
-        response.status(200).send()
-    } else {
-        response.status(400).send(parsedPatient.error)
-    }
+        const parsedCase = PatientSchema.partial().safeParse(body)
 
-    return
+        if (parsedCase.success) {
+            let parsedBody = request.body
+
+            if (parsedBody.genes != undefined) {
+                parsedBody.genes = JSON.stringify(parsedBody.genes)
+            }
+
+            const result = await PatientsModel.update(parsedBody, { where: { cpf: request.query.cpf } })
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            response.status(400).send(parsedCase.error)
+        }
+    } else {
+        response.status(400).send(cpfParse.error)
+    }
 }
 
 export async function DeletePatient(request: Request, response: Response) {

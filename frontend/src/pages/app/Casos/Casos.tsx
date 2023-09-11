@@ -185,14 +185,58 @@ interface CaseRowProps {
 
 function CaseRow({ caseData }: CaseRowProps) {
     const [motherData, setMotherData] = React.useState<Patient | undefined>(undefined);
-    const [currentProcessIndex, setCurrentProcessIndex] = React.useState<number | undefined>(
-        undefined
-    );
+    const [processData, setProcessData] = React.useState<Process | undefined>(undefined);
     const caseProcesses = JSON.parse((caseData as any).processes) as Process[];
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        const loader = async () => {
+        const loaderProcess = async () => {
+            for (let i = 0; i < caseProcesses.length; i++) {
+                let found = false;
+
+                await fetch("http://localhost:3000/processes?id=" + caseProcesses[i], {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then(async (res) => {
+                        if (res.status === 500) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+
+                        await res
+                            .json()
+                            .then((response: Process) => {
+                                if (response.status == "FAZENDO") {
+                                    setProcessData(response);
+                                    found = true;
+                                }
+                            })
+                            .catch(() => {
+                                toast.error("Algo deu errado :/", {
+                                    position: "bottom-center",
+                                    theme: "light",
+                                });
+                            });
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                if (found) break;
+            }
+        };
+
+        const loaderPatient = async () => {
             await fetch("http://localhost:3000/patients?cpf=" + caseData.motherId, {
                 method: "GET",
                 headers: {
@@ -205,8 +249,6 @@ function CaseRow({ caseData }: CaseRowProps) {
                             position: "bottom-center",
                             theme: "light",
                         });
-
-                        return;
                     }
 
                     await res
@@ -229,14 +271,8 @@ function CaseRow({ caseData }: CaseRowProps) {
                 });
         };
 
-        for (let i = 0; i < caseProcesses.length; i++) {
-            if (caseProcesses[i].status === "FAZENDO") {
-                setCurrentProcessIndex(i);
-                break;
-            }
-        }
-
-        if (caseData.motherId != "") loader();
+        if (caseData.motherId != "") loaderPatient();
+        loaderProcess();
     }, []);
 
     return (
@@ -266,13 +302,11 @@ function CaseRow({ caseData }: CaseRowProps) {
             <td>{new Date(caseData.updatedAt).toLocaleString()}</td>
             <td>
                 <Typography>
-                    {currentProcessIndex === undefined
-                        ? "CARREGANDO"
-                        : caseProcesses[currentProcessIndex].name}
+                    {processData === undefined ? "CARREGANDO" : processData.name}
                 </Typography>
             </td>
             <td>
-                {currentProcessIndex === undefined ? (
+                {processData === undefined ? (
                     <Typography variant="soft" sx={{ width: "max-content" }}>
                         CARREGANDO
                     </Typography>
@@ -280,9 +314,9 @@ function CaseRow({ caseData }: CaseRowProps) {
                     <Typography
                         variant="solid"
                         color={
-                            (caseProcesses[currentProcessIndex].status as any) === "FEITO"
+                            (processData.status as any) === "FEITO"
                                 ? "success"
-                                : (caseProcesses[currentProcessIndex].status as any) === "FAZENDO"
+                                : (processData.status as any) === "FAZENDO"
                                 ? "primary"
                                 : "danger"
                         }
@@ -291,7 +325,7 @@ function CaseRow({ caseData }: CaseRowProps) {
                             maxWidth: "max-content",
                             paddingX: "0.500rem",
                         }}>
-                        {caseProcesses[currentProcessIndex].status}
+                        {processData.status}
                     </Typography>
                 )}
             </td>
@@ -573,7 +607,11 @@ export default function Casos() {
                         {stableSort(casesData, getComparator(order, orderBy))
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row) => {
-                                return <CaseRow caseData={row} />;
+                                return (
+                                    <React.Fragment key={row.id}>
+                                        <CaseRow caseData={row} />
+                                    </React.Fragment>
+                                );
                             })}
                         {emptyRows > 0 && (
                             <tr

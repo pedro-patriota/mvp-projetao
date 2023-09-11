@@ -123,7 +123,11 @@ function CasoRow({ id, caseData }: CasoRowProps) {
                             size="sm"
                             variant="soft"
                             color="success"
-                            disabled={processData == undefined || processData.status == "PENDENTE"}>
+                            disabled={
+                                processData == undefined ||
+                                processData.status == "FEITO" ||
+                                processData.status == "PENDENTE"
+                            }>
                             Fazer
                         </Button>
                     ) : (
@@ -282,7 +286,6 @@ export default function Caso() {
                                         )}
                                     </Typography>
                                 </Stack>
-
                                 <Table borderAxis="both">
                                     <thead>
                                         <tr>
@@ -295,7 +298,9 @@ export default function Caso() {
                                     </thead>
                                     <tbody>
                                         {caseData.processes.map((process) => (
-                                            <CasoRow id={process} caseData={caseData} />
+                                            <React.Fragment key={process}>
+                                                <CasoRow id={process} caseData={caseData} />
+                                            </React.Fragment>
                                         ))}
                                     </tbody>
                                 </Table>
