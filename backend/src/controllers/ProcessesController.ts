@@ -8,15 +8,12 @@ export async function CreateProcess(request: Request, response: Response) {
     const schema = ProcessSchema.omit({ id: true })
     const id = nanoid()
 
+    let body = request.body
+
     const parsedProcess = schema.safeParse(request.body)
 
     if (parsedProcess.success) {
-        const tempProcess: Process = {
-            id,
-            ...request.body,
-        }
-
-        await ProcessModel.create(tempProcess)
+        await ProcessModel.create(body)
             .then(() => {
                 response.status(201).send({ id })
             })
@@ -35,7 +32,7 @@ export async function CreateAllCaseProcess(request: Request, response: Response)
         let process: Process = newProcess({ name: processNameList[i] })
 
         if (processNameList[i] == 'CADASTRO') {
-            process = { ...process, status: 'FAZENDO', currentStep: 'mother' }
+            process = { ...process, status: 'FAZENDO' }
         }
 
         await ProcessModel.create(process)

@@ -13,8 +13,9 @@ export const ProcessSchema = z.object({
     name: ProcessNameSchema,
     detalhes: z.string(),
     status: ProcessStatusSchema,
-    didBy: z.string(),
-    currentStep: z.string(),
+    mother: z.string(),
+    son: z.string(),
+    father: z.string(),
 })
 
 export const newProcess = (process?: Partial<Process>) => {
@@ -23,8 +24,9 @@ export const newProcess = (process?: Partial<Process>) => {
         name: 'CADASTRO',
         detalhes: '',
         status: 'PENDENTE',
-        didBy: '',
-        currentStep: '',
+        mother: 'false',
+        son: 'false',
+        father: 'false',
     }
 
     if (process != undefined) {

@@ -75,10 +75,12 @@ function CasoRow({ id, caseData }: CasoRowProps) {
             CADASTRO: async () => {
                 navigate(`/app/cadastro/${caseData.id}/mother`);
             },
+            COLETA: async () => {
+                navigate(`/app/coleta/${caseData.id}/${id}`);
+            },
             ANALISE: async () => {},
             SEQUENCIAMENTO: async () => {},
             DOCUMENTAÇÃO: async () => {},
-            COLETA: async () => {},
             CONCLUÍDO: async () => {},
         };
 
@@ -195,6 +197,16 @@ export default function Caso() {
                         theme: "light",
                     });
                 });
+        };
+
+        loader();
+    }, []);
+
+    useEffect(() => {
+        const loader = async () => {
+            if (caseData == undefined) return;
+
+            await fetch("");
         };
 
         loader();
