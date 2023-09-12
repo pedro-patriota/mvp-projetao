@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/joy/Box";
-import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import { Button, Input, Radio, RadioGroup, Typography } from "@mui/joy";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { PatientSchema, PatientSex, newPatient } from "../../../../../backend/common/patients";
 import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
@@ -64,8 +63,6 @@ export default function Cadastro() {
         loader();
     }, []);
 
-    const navigate = useNavigate();
-
     const handleNextStep = async () => {
         const patient = newPatient({
             cpf,
@@ -125,6 +122,8 @@ export default function Cadastro() {
                     });
                 });
 
+            const allProcesses = JSON.parse(caseData.processes as any as string) as string[];
+
             if (step == "mother") {
                 await fetch("http://localhost:3000/cases?id=" + casoId, {
                     method: "PUT",
@@ -134,6 +133,34 @@ export default function Cadastro() {
                     body: JSON.stringify({ motherId: patient.cpf }),
                 })
                     .then((res) => {
+                        if (res.status != 200) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ mother: `${new Date().getTime()}` } as Partial<Process>),
+                })
+                    .then((res) => {
+                        console.log(res);
+                        return res.json();
+                    })
+                    .then(async (res) => {
                         if (res.status != 200) {
                             toast.error("Algo deu errado :/", {
                                 position: "bottom-center",
@@ -160,6 +187,34 @@ export default function Cadastro() {
                     body: JSON.stringify({ sonId: patient.cpf }),
                 })
                     .then((res) => {
+                        if (res.status != 200) {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+
+                            return;
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+                    });
+
+                await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ son: `${new Date().getTime()}` } as Partial<Process>),
+                })
+                    .then((res) => {
+                        console.log(res);
+                        return res.json();
+                    })
+                    .then(async (res) => {
                         if (res.status != 200) {
                             toast.error("Algo deu errado :/", {
                                 position: "bottom-center",
@@ -206,14 +261,15 @@ export default function Cadastro() {
                         });
                     });
 
-                const allProcesses = JSON.parse(caseData.processes as any as string) as string[];
-
                 await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ status: "FEITO" } as Partial<Process>),
+                    body: JSON.stringify({
+                        status: "FEITO",
+                        father: `${new Date().getTime()}`,
+                    } as Partial<Process>),
                 })
                     .then((res) => {
                         console.log(res);

@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/joy";
+import { Box, Stack, Typography } from "@mui/joy";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -124,16 +124,50 @@ export default function Paciente() {
                                 Sexo: {patientData.gender}
                             </Typography>
                             <Typography startDecorator={<Numbers />} level="body-md">
-                                Idade: {patientData.age}
+                                CPF: {patientData.cpf}
                             </Typography>
-                            <Typography startDecorator={<People />} level="body-md">
-                                Tem irmão gemeo: {patientData.sibling == true ? "SIM" : "NÃO"}
+                            <Stack direction="row">
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    RG: {patientData.rg}
+                                </Typography>
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    Orgão: {patientData.rg}
+                                </Typography>
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    UF: {patientData.rg}
+                                </Typography>
+                            </Stack>
+                            <Stack direction="row">
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    Endereço: {patientData.rg}
+                                </Typography>
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    Bairro: {patientData.rg}
+                                </Typography>
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    UF: {patientData.rg}
+                                </Typography>
+                                <Typography startDecorator={<Numbers />} level="body-md">
+                                    CEP: {patientData.rg}
+                                </Typography>
+                            </Stack>
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Testemunha: {patientData.rg}
                             </Typography>
-                            <Typography startDecorator={<Bloodtype />} level="body-md">
-                                Transfusão: {patientData.transfusao == true ? "SIM" : "NÃO"}
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Parentesco Biologico Pai: {patientData.rg}
                             </Typography>
-                            <Typography startDecorator={<VolunteerActivism />} level="body-md">
-                                Transplante: {patientData.transplante == true ? "SIM" : "NÃO"}
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Parentesco Pai: {patientData.rg}
+                            </Typography>
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Irmão Gemêo: {patientData.rg}
+                            </Typography>
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Transplante de Medula: {patientData.rg}
+                            </Typography>
+                            <Typography startDecorator={<Numbers />} level="body-md">
+                                Transfusão de Sangue: {patientData.rg}
                             </Typography>
                         </>
                     )}

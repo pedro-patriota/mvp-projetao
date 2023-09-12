@@ -18,12 +18,16 @@ export const ProcessModel = sequelize.define('PROCESSES', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    didBy: {
+    mother: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    currentStep: {
-        type: DataTypes.TEXT,
+    son: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    father: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
 })
