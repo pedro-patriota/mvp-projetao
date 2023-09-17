@@ -24,6 +24,7 @@ import { Case } from "../../../../../backend/common/case";
 import { Process } from "../../../../../backend/common/process";
 import Spreadsheet from "react-spreadsheet";
 import { styled } from "@mui/joy";
+import "./Sequenciamento.css";
 
 const override: React.CSSProperties = {
     display: "block",

@@ -78,8 +78,12 @@ function CasoRow({ id, caseData }: CasoRowProps) {
             COLETA: async () => {
                 navigate(`/app/coleta/${caseData.id}/${id}`);
             },
-            ANALISE: async () => {},
-            SEQUENCIAMENTO: async () => {},
+            SEQUENCIAMENTO: async () => {
+                navigate(`/app/sequenciamentos`);
+            },
+            ANALISE: async () => {
+                navigate(`/app/analise/${caseData.id}`);
+            },
             DOCUMENTAÇÃO: async () => {},
             CONCLUÍDO: async () => {},
         };

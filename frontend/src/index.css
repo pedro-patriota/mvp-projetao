@@ -32,11 +32,6 @@ body {
     min-height: 100vh;
 }
 
-.Spreadsheet__cell {
-    width: 150px;
-    font-size: 0.8rem;
-}
-
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
