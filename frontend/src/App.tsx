@@ -6,8 +6,8 @@ import SignIn from "./pages/home/SignIn";
 import SignUp from "./pages/home/SignUp";
 import HomeLayout from "./layouts/HomeLayout";
 import Coleta from "./pages/app/Coleta/Coleta";
-import SequenciadorSeletor from "./pages/app/Sequenciamento/SequenciadorSeletor";
-import SequenciamentoLista from "./pages/app/Sequenciamento/SequenciamentoLista";
+import Sequenciamento from "./pages/app/Sequenciamento/Sequenciamento";
+import Sequenciamentos from "./pages/app/Sequenciamento/Sequenciamentos";
 import NotFound from "./pages/NotFound";
 import "react-toastify/dist/ReactToastify.css";
 import Analise from "./pages/app/Analise/Analise";
@@ -36,9 +36,9 @@ export default function FilesExample() {
                         <Route path="cadastro/:casoId/:step" element={<Cadastro />}></Route>
                         <Route path="analise" element={<Analise />}></Route>
                         <Route
-                            path="sequenciador-seletor"
-                            element={<SequenciadorSeletor />}></Route>
-                        <Route path="sequenciador-lista" element={<SequenciamentoLista />}></Route>
+                            path="sequenciamento/:sequenciamentoId"
+                            element={<Sequenciamento />}></Route>
+                        <Route path="sequenciamentos" element={<Sequenciamentos />}></Route>
                         <Route
                             path="pacientes"
                             element={<PaginaPacientes></PaginaPacientes>}></Route>

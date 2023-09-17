@@ -8,5 +8,6 @@ SequencingRouter.route('/all').get(SequencingController.GetAllSequencings)
 SequencingRouter.route('').get(SequencingController.GetSequencing)
 SequencingRouter.route('').put(SequencingController.UpdateSequencing)
 SequencingRouter.route('').delete(SequencingController.DeleteSequencing)
+SequencingRouter.route('/genes').post(SequencingController.ProcessSequencingPatientGene)
 
 export default SequencingRouter

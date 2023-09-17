@@ -17,9 +17,5 @@ export const SequencingModel = sequelize.define('SEQUENCING', {
     kit: {
         type: DataTypes.STRING,
         allowNull: false,
-    },
-    map: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
+    }
 })
