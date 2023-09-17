@@ -209,7 +209,7 @@ export default function Sequenciamentos() {
                                 res.push({
                                     ...response[i],
                                     cases: JSON.parse(response[i].cases),
-                                    map: JSON.parse(response[i].map),
+                                    //map: JSON.parse(response[i].map),
                                 });
                             }
 
