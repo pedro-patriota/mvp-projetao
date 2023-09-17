@@ -196,7 +196,7 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
                 { genes: JSON.stringify(body.genes) },
                 {
                     where: {
-                        cpf: caseData.sonId,
+                        cpf: caseData.fatherId,
                     },
                 }
             )
