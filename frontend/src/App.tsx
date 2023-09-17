@@ -34,7 +34,7 @@ export default function FilesExample() {
                         <Route path="casos" element={<Casos />}></Route>
                         <Route path="caso/:id" element={<Caso />}></Route>
                         <Route path="cadastro/:casoId/:step" element={<Cadastro />}></Route>
-                        <Route path="analise" element={<Analise />}></Route>
+                        <Route path="analise/:casoId" element={<Analise />}></Route>
                         <Route
                             path="sequenciamento/:sequenciamentoId"
                             element={<Sequenciamento />}></Route>
