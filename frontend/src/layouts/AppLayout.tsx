@@ -85,9 +85,7 @@ export default function AppLayout() {
                         <Link href="/app/analise" fontWeight="lg">
                             Analise
                         </Link>
-                        <Link href="/app/casos" fontWeight="lg">
-                            Casos
-                        </Link>
+                        
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
                         <Button variant="soft">Costa</Button>
