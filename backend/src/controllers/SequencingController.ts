@@ -3,6 +3,12 @@ import { Sequencing, SequencingSchema } from '../../common/sequencing'
 import { nanoid } from 'nanoid'
 import { SequencingModel } from '../model/sequencing/model'
 import { z } from 'zod'
+import { CaseModel } from '../model/case/model'
+import { Case } from '../../common/case'
+import { PatientsModel } from '../model/patients/model'
+import { Patient } from '../../common/patients'
+import { ProcessModel } from '../model/processes/model'
+import { Process } from '../../common/process'
 
 export async function CreateSequencing(request: Request, response: Response) {
     const schema = SequencingSchema.omit({ id: true })
@@ -15,7 +21,6 @@ export async function CreateSequencing(request: Request, response: Response) {
             id,
             ...request.body,
             cases: JSON.stringify(request.body.cases),
-            map: JSON.stringify(request.body.map),
         }
 
         await SequencingModel.create(tempSequencing)
@@ -73,14 +78,6 @@ export async function UpdateSequencing(request: Request, response: Response) {
     if (idParse.success) {
         let body = request.body
 
-        if (body.map != undefined) {
-            body.map = JSON.parse(body.map)
-        }
-
-        if (body.cases != undefined) {
-            body.cases = JSON.parse(body.cases)
-        }
-
         const parsedCase = SequencingSchema.partial().safeParse(body)
 
         if (parsedCase.success) {
@@ -131,5 +128,112 @@ export async function DeleteSequencing(request: Request, response: Response) {
             })
     } else {
         response.status(400).send(parsedGet.error)
+    }
+}
+
+export async function ProcessSequencingPatientGene(request: Request, response: Response) {
+    const bodySchema = z.object({
+        caseId: z.string(),
+        person: z.enum(['F', 'M', 'P']),
+        genes: z.array(z.string()),
+    })
+
+    const body = { ...request.body }
+
+    const bodyParse = bodySchema.safeParse(body)
+
+    if (bodyParse.success) {
+        const caseData: Case | undefined = await CaseModel.findByPk(body.caseId)
+            .then((value) => {
+                if (value != null && value != undefined) {
+                    return { ...value.dataValues, processes: JSON.parse(value.dataValues.processes) } as Case
+                } else {
+                    return undefined
+                }
+            })
+            .catch(() => undefined)
+
+        if (caseData == undefined) {
+            console.log('1')
+            response.status(500).send()
+            return
+        }
+
+        if (body.person == 'M') {
+            const result = await PatientsModel.update(
+                { genes: JSON.stringify(body.genes) },
+                {
+                    where: {
+                        cpf: caseData.motherId,
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else if (body.person == 'F') {
+            const result = await PatientsModel.update(
+                { genes: JSON.stringify(body.genes) },
+                {
+                    where: {
+                        cpf: caseData.sonId,
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            response.status(200).send()
+        } else {
+            const genesResult = await PatientsModel.update(
+                { genes: JSON.stringify(body.genes) },
+                {
+                    where: {
+                        cpf: caseData.fatherId,
+                    },
+                }
+            )
+
+            if (genesResult[0] == 0) {
+                console.log('2')
+                response.status(500).send()
+                return
+            }
+
+            const sequencingProcessResult = await ProcessModel.update({ status: 'FEITO' } as Partial<Process>, {
+                where: {
+                    id: caseData.processes[2],
+                },
+            })
+
+            if (sequencingProcessResult[0] == 0) {
+                console.log('3')
+                response.status(500).send()
+                return
+            }
+
+            const analiseProcessResult = await ProcessModel.update({ status: 'FAZENDO' } as Partial<Process>, {
+                where: {
+                    id: caseData.processes[3],
+                },
+            })
+
+            if (analiseProcessResult[0] == 0) {
+                console.log('4')
+                response.status(500).send()
+                return
+            }
+
+            response.status(200).send()
+        }
+    } else {
+        response.status(400).send(bodyParse.error)
     }
 }
