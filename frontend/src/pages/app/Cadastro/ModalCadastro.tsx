@@ -17,13 +17,13 @@ const style = {
 };
 
 export  function ModalCadastro() {
-  //const [open, setOpen] = useState(false);
-  /* const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false); */
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button>
+      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -38,7 +38,7 @@ export  function ModalCadastro() {
             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
           </Typography>
         </Box>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

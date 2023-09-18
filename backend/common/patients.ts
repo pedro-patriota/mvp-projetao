@@ -25,7 +25,7 @@ export const PatientSchema = z.object({
     irmaoGemeo: z.string(),
     transplanteMedula: z.string(),
     transfusaoSangue: z.string(),
-    genes: z.array(z.array(z.string())),
+    genes: z.array(z.array(z.number())),
 })
 
 export const newPatient = (patient?: Partial<Patient>) => {
