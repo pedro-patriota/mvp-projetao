@@ -83,8 +83,12 @@ function CasoRow({ id, caseData }: CasoRowProps) {
             COLETA: async () => {
                 navigate(`/app/coleta/${caseData.id}/${id}`);
             },
-            ANALISE: async () => {},
-            SEQUENCIAMENTO: async () => {},
+            SEQUENCIAMENTO: async () => {
+                navigate(`/app/sequenciamentos`);
+            },
+            ANALISE: async () => {
+                navigate(`/app/analise/${caseData.id}`);
+            },
             DOCUMENTAÇÃO: async () => {},
             CONCLUÍDO: async () => {},
         };
@@ -178,52 +182,93 @@ export default function Caso() {
     const [loading, setLoading] = React.useState<boolean>(true);
     const { id } = useParams();
 
-    useEffect(() => {
+    const fetchPatientNames = async () => {
+        try {
+          const motherResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.motherId}`);
+          if (!motherResponse.ok) {
+            throw new Error('Erro na solicitação da mãe');
+          }
+          const mother = await motherResponse.json();
+      
+          const sonResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.sonId}`);
+          if (!sonResponse.ok) {
+            throw new Error('Erro na solicitação do filho');
+          }
+          const son = await sonResponse.json();
+      
+          const fatherResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.fatherId}`);
+          if (!fatherResponse.ok) {
+            throw new Error('Erro na solicitação do pai');
+          }
+          const father = await fatherResponse.json();
+      
+          console.log(mother, father, son);
+      
+          return {
+            mother: mother ? mother.name : 'Não registrado',
+            son: son ? son.name : 'Não registrado',
+            father: father ? father.name : 'Não registrado',
+          };
+        } catch (error) {
+          console.error('Erro ao buscar nomes de pacientes:', error);
+          return {
+            mother: 'Não registrado',
+            son: 'Não registrado',
+            father: 'Não registrado',
+          };
+        }
+      };
+      
+
+      useEffect(() => {
         const loader = async () => {
-            if (id == undefined) return;
-
-            await fetch(URL + id, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(async (res) => {
-                    if (res.status === 500) {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
-
-                        return;
-                    }
-
-                    await res
-                        .json()
-                        .then((response) => {
-                            setCaseData({
-                                ...response,
-                                processes: JSON.parse(response.processes),
-                            } as Case & { updatedAt: string });
-                            setLoading(false);
-                        })
-                        .catch(() => {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-                        });
+          if (id == undefined) return;
+      
+          await fetch(URL + id, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then(async (res) => {
+              if (res.status === 500) {
+                toast.error('Algo deu errado :/', {
+                  position: 'bottom-center',
+                  theme: 'light',
+                });
+      
+                return;
+              }
+      
+              await res
+                .json()
+                .then(async (response) => {
+                  const caseWithNames = {
+                    ...response,
+                    processes: JSON.parse(response.processes),
+                    ...(await fetchPatientNames()), // Buscar nomes dos pacientes
+                  };
+      
+                  setCaseData(caseWithNames);
+                  setLoading(false);
                 })
                 .catch(() => {
-                    toast.error("Algo deu errado :/", {
-                        position: "bottom-center",
-                        theme: "light",
-                    });
+                  toast.error('Algo deu errado :/', {
+                    position: 'bottom-center',
+                    theme: 'light',
+                  });
                 });
+            })
+            .catch(() => {
+              toast.error('Algo deu errado :/', {
+                position: 'bottom-center',
+                theme: 'light',
+              });
+            });
         };
-
+      
         loader();
-    }, []);
+      }, [caseData]);
 
     useEffect(() => {
         const loader = async () => {
@@ -299,7 +344,7 @@ export default function Caso() {
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.motherId}</Typography>
+                                            <Typography>{caseData.mother}</Typography>
                                         )}
                                     </Typography>
                                     <Typography level="body-md">
@@ -309,7 +354,7 @@ export default function Caso() {
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.fatherId}</Typography>
+                                            <Typography>{caseData.father}</Typography>
                                         )}
                                     </Typography>
                                     <Typography level="body-md">
@@ -319,7 +364,7 @@ export default function Caso() {
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.sonId}</Typography>
+                                            <Typography>{caseData.son}</Typography>
                                         )}
                                     </Typography>
                                 </Stack>
