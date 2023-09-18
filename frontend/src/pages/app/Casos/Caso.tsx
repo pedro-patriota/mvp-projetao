@@ -4,8 +4,11 @@ import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
 import { Process, ProcessName } from "../../../../../backend/common/process";
 import { Box, Button, Stack, Table, Typography } from "@mui/joy";
+import Modal from '@mui/material/Modal';
 import Barloader from "react-spinners/BarLoader";
 import { AdsClick, Visibility } from "@mui/icons-material";
+import { StyledModalBackdrop } from "@mui/joy/Modal/Modal";
+import {ModalCadastro} from "../Cadastro/ModalCadastro";
 
 const override: React.CSSProperties = {
     display: "block",
@@ -23,32 +26,32 @@ interface CasoRowProps {
 function CasoRow({ id, caseData }: CasoRowProps) {
     const [processData, setProcessData] = useState<(Process & { updatedAt: string }) | undefined>(
         undefined
-    );
-
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const loader = async () => {
+        );
+        
+        const navigate = useNavigate();
+        
+        useEffect(() => {
+            const loader = async () => {
             await fetch("http://localhost:3000/processes?id=" + id, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             })
-                .then(async (res) => {
-                    if (res.status === 500) {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
+            .then(async (res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
                         });
-
+                        
                         return;
                     }
-
+                    
                     await res
-                        .json()
-                        .then((response: Process) => {
-                            setProcessData({ ...response } as Process & { updatedAt: string });
+                    .json()
+                    .then((response: Process) => {
+                        setProcessData({ ...response } as Process & { updatedAt: string });
                         })
                         .catch(() => {
                             toast.error("Algo deu errado :/", {
@@ -56,9 +59,9 @@ function CasoRow({ id, caseData }: CasoRowProps) {
                                 theme: "light",
                             });
                         });
-                })
-                .catch(() => {
-                    toast.error("Algo deu errado :/", {
+                    })
+                    .catch(() => {
+                        toast.error("Algo deu errado :/", {
                         position: "bottom-center",
                         theme: "light",
                     });
@@ -68,9 +71,11 @@ function CasoRow({ id, caseData }: CasoRowProps) {
         loader();
     }, []);
 
+    
+    
     const handleAction = async () => {
         if (processData == undefined) return;
-
+        
         const actions: Record<ProcessName, () => Promise<void>> = {
             CADASTRO: async () => {
                 navigate(`/app/cadastro/${caseData.id}/mother`);
@@ -83,12 +88,29 @@ function CasoRow({ id, caseData }: CasoRowProps) {
             DOCUMENTAÇÃO: async () => {},
             CONCLUÍDO: async () => {},
         };
+        await actions[processData.name]();
+    };
 
+    const [open, setOpen] = React.useState(true);
+    const handleSee = async () => {
+        if (processData == undefined) return;
+        const actions: Record<ProcessName, () => Promise<void>> = {
+            CADASTRO: async () => {
+                
+                ModalCadastro();                
+            },
+            COLETA: async () => {},
+            ANALISE: async () => {},
+            SEQUENCIAMENTO: async () => {},
+            DOCUMENTAÇÃO: async () => {},
+            CONCLUÍDO: async () => {},
+        };
         await actions[processData.name]();
     };
 
     return (
         <tr>
+            
             <td>{processData == undefined ? "CARREGANDO..." : processData.name}</td>
             <td>
                 {processData == undefined
@@ -138,6 +160,7 @@ function CasoRow({ id, caseData }: CasoRowProps) {
 
                     <Button
                         startDecorator={<Visibility />}
+                        onClick={() => handleSee()}
                         size="sm"
                         variant="soft"
                         color="primary"
@@ -222,7 +245,8 @@ export default function Caso() {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-            <Box
+
+           <Box
                 sx={{
                     width: "100%",
                     height: "100%",
@@ -239,6 +263,7 @@ export default function Caso() {
                         justifyContent: "center",
                         padding: "2rem",
                     }}>
+                    
                     <Box
                         sx={{
                             width: "100%",
