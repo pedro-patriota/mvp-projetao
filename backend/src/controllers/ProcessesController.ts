@@ -15,7 +15,7 @@ export async function CreateProcess(request: Request, response: Response) {
     if (parsedProcess.success) {
         await ProcessModel.create(body)
             .then(() => {
-                response.status(201).send({ id })
+                response.status(200).send({ id })
             })
             .catch((e) => {
                 response.status(500).send(e)
@@ -23,29 +23,6 @@ export async function CreateProcess(request: Request, response: Response) {
     } else {
         response.status(400).send(parsedProcess.error)
     }
-}
-
-export async function CreateAllCaseProcess(request: Request, response: Response) {
-    let processes: string[] = []
-
-    for (let i = 0; i < processNameList.length; i++) {
-        let process: Process = newProcess({ name: processNameList[i] })
-
-        if (processNameList[i] == 'CADASTRO') {
-            process = { ...process, status: 'FAZENDO' }
-        }
-
-        await ProcessModel.create(process)
-            .then(() => {
-                processes.push(process.id)
-            })
-            .catch((e) => {
-                response.status(500).send(e)
-                return
-            })
-    }
-
-    response.status(200).send(processes)
 }
 
 export async function GetProcess(request: Request, response: Response) {

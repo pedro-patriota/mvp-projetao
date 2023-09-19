@@ -1417,3 +1417,22 @@ export const exclusionColumn = (table: { value: string }[][], row: number): stri
         }
     }
 };
+
+export const analise = (table: { value: string }[][]): [boolean, number] => {
+    let nCount = 0;
+    let total = 0;
+
+    console.log(table);
+
+    for (let i = 0; i < table.length; i++) {
+        if (table[i][13].value == "") continue;
+
+        if (table[i][13].value == "N") {
+            nCount += 1;
+        }
+
+        total += 1;
+    }
+
+    return [!(nCount >= 0.95 * total), 0.5 + 0.5 * (nCount / total)];
+};

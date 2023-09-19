@@ -11,7 +11,7 @@ export async function CreateUser(request: Request, response: Response) {
 
         await UserModel.create(tempUser)
             .then(() => {
-                response.status(201).send({ email: tempUser.email })
+                response.status(200).send({ email: tempUser.email })
             })
             .catch((e) => {
                 response.status(500).send(e)

@@ -22,4 +22,12 @@ export const CaseModel = sequelize.define('CASES', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    excluido: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    probabilidade: {
+        type: DataTypes.NUMBER,
+        allowNull: false,
+    },
 })

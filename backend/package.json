@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "tsc -p",
-        "start": "nodemon src/index.ts",
+        "start": "nodemon src/index.ts --ignore src/utils/appData.json",
         "test": "jest"
     },
     "keywords": [],

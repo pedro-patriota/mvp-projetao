@@ -1,38 +1,33 @@
 import { Request, Response } from 'express'
-import { Sequencing, SequencingSchema } from '../../common/sequencing'
-import { nanoid } from 'nanoid'
+import { Sequencing, SequencingSchema, newSequencing } from '../../common/sequencing'
 import { SequencingModel } from '../model/sequencing/model'
 import { z } from 'zod'
 import { CaseModel } from '../model/case/model'
 import { Case } from '../../common/case'
 import { PatientsModel } from '../model/patients/model'
-import { Patient } from '../../common/patients'
 import { ProcessModel } from '../model/processes/model'
 import { Process } from '../../common/process'
+import { ReadAPPData, WriteAPPData } from '../utils/jsonHandler'
+import { AppData } from '../../common/appdata'
 
 export async function CreateSequencing(request: Request, response: Response) {
-    const schema = SequencingSchema.omit({ id: true })
-    const id = nanoid()
+    let appData: AppData = ReadAPPData()
 
-    const parsedSequencing = schema.safeParse(request.body)
+    const id = `${new Date().getFullYear()}-${appData.currentSequencing}`
 
-    if (parsedSequencing.success) {
-        const tempSequencing: Sequencing = {
-            id,
-            ...request.body,
-            cases: JSON.stringify(request.body.cases),
-        }
+    const tempSequencing: Sequencing = newSequencing({ id })
+    appData.currentSequencing += 1
 
-        await SequencingModel.create(tempSequencing)
-            .then(() => {
-                response.status(201).send({ id })
-            })
-            .catch((e) => {
-                response.status(500).send(e)
-            })
-    } else {
-        response.status(400).send(parsedSequencing.error)
-    }
+    WriteAPPData(appData)
+
+    await SequencingModel.create({ ...tempSequencing, id, cases: JSON.stringify(tempSequencing.cases as any as string) })
+        .then(() => {
+            response.status(200).send({ id })
+        })
+        .catch((e) => {
+            console.log(e)
+            response.status(500).send(e)
+        })
 }
 
 export async function GetSequencing(request: Request, response: Response) {

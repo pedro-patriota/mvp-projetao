@@ -48,7 +48,7 @@ export default function SignIn() {
                             theme: "light",
                         });
 
-                        //navigate("/signin");
+                        navigate("/app/casos");
                     }
                 })
                 .catch(() => {

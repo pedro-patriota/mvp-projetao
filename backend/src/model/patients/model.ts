@@ -6,6 +6,10 @@ export const PatientsModel = sequelize.define('PATIENTS', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    nascimento: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     phone: {
         type: DataTypes.STRING,
         allowNull: false,

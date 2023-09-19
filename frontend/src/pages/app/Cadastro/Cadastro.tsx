@@ -8,24 +8,62 @@ import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
 import { Process } from "../../../../../backend/common/process";
 
+function calculateVerifierDigit(digits: number[], base: number): number {
+    const sum = digits.reduce((acc, digit, index) => acc + digit * (base - index), 0);
+    const remainder = sum % 11;
+
+    return remainder < 2 ? 0 : 11 - remainder;
+}
+
+function generateRandomCPF(): string {
+    const randomDigit = () => Math.floor(Math.random() * 10);
+
+    const cpfDigits = Array.from({ length: 9 }, randomDigit);
+    const firstVerifierDigit = calculateVerifierDigit(cpfDigits, 10);
+    cpfDigits.push(firstVerifierDigit);
+    const secondVerifierDigit = calculateVerifierDigit(cpfDigits, 11);
+    cpfDigits.push(secondVerifierDigit);
+
+    return cpfDigits.join("");
+}
+
+function generateRandomRG(): string {
+    const randomDigit = () => Math.floor(Math.random() * 10);
+    const rgDigits = Array.from({ length: 8 }, () => randomDigit());
+
+    return `${rgDigits.join("")}`;
+}
+
+function generatePhone(): string {
+    const areaCode = Math.floor(Math.random() * 90) + 11; // Random area code between 11 and 99
+    const firstDigit = Math.floor(Math.random() * 10); // Random first digit (0-9)
+    const secondDigit = Math.floor(Math.random() * 10); // Random second digit (0-9)
+    const subscriberNumber = Math.floor(Math.random() * 900000000) + 100000000; // Random subscriber number between 100,000,000 and 999,999,999
+
+    return `(${areaCode}) ${firstDigit}${secondDigit}9${subscriberNumber
+        .toString()
+        .substring(0, 4)}-${subscriberNumber.toString().substring(4)}`;
+}
+
 export default function Cadastro() {
     const { casoId, step } = useParams();
     const [caseData, setCaseData] = useState<Case | undefined>(undefined);
 
-    const [name, setName] = useState<string>("Jose Lucas");
-    const [phone, setPhone] = useState<string>("40028922");
+    const [name, setName] = useState<string>("MARCELO VICTOR DA SILVA");
+    const [nascimento, setNascimento] = useState<string>("12/07/1997");
+    const [phone, setPhone] = useState<string>(generatePhone());
     const [naturality, setNaturality] = useState<string>("Brasileira");
-    const [cpf, setCpf] = useState<string>("9999999999");
-    const [rg, setRg] = useState<string>("9999999999");
+    const [cpf, setCpf] = useState<string>(generateRandomCPF());
+    const [rg, setRg] = useState<string>(generateRandomRG());
     const [rgOrgao, setRgOrgao] = useState<string>("SDS");
     const [rgUF, setRgUf] = useState<string>("PE");
     const [gender, setGender] = useState<PatientSex>("Masculino");
-    const [address, setAddress] = useState<string>("RUA LEGAL");
-    const [city, setCity] = useState<string>("RECIFE");
-    const [bairro, setBairro] = useState<string>("ASDOSKD");
+    const [address, setAddress] = useState<string>("Rua bosque dos vertentes");
+    const [city, setCity] = useState<string>("Recife");
+    const [bairro, setBairro] = useState<string>("Iputinga");
     const [addressUF, setAddressUF] = useState<string>("PE");
-    const [addressCEP, setAddressCEP] = useState<string>("12344567");
-    const [testemunha, setTestemunha] = useState<string>("false");
+    const [addressCEP, setAddressCEP] = useState<string>("55404-404");
+    const [testemunha, setTestemunha] = useState<string>("true");
     const [parenteBiologicoPai, setParenteBiologicoPai] = useState<string>("false");
     const [parentescoPai, setParentescoPai] = useState<string>("false");
     const [irmaoGemeo, setIrmaoGemeo] = useState<string>("false");
@@ -66,6 +104,7 @@ export default function Cadastro() {
     const handleNextStep = async () => {
         const patient = newPatient({
             cpf,
+            nascimento,
             name,
             phone,
             naturality,
@@ -98,7 +137,7 @@ export default function Cadastro() {
                 return;
             }
 
-            await fetch("http://localhost:3000/patients", {
+            const patientCreated: boolean = await fetch("http://localhost:3000/patients", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,218 +146,254 @@ export default function Cadastro() {
             })
                 .then(async (res) => {
                     if (res.status === 500) {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
-
-                        return;
+                        return false;
                     }
+
+                    return true;
                 })
-                .catch(() => {
-                    toast.error("Algo deu errado :/", {
-                        position: "bottom-center",
-                        theme: "light",
-                    });
+                .catch((e) => {
+                    console.log(e);
+                    return false;
                 });
+
+            if (patientCreated == false) {
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+
+                return;
+            }
 
             const allProcesses = JSON.parse(caseData.processes as any as string) as string[];
 
             if (step == "mother") {
-                await fetch("http://localhost:3000/cases?id=" + casoId, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ motherId: patient.cpf }),
-                })
+                const motherUpdatedInCase: boolean = await fetch(
+                    "http://localhost:3000/cases?id=" + casoId,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ motherId: patient.cpf } as Partial<Case>),
+                    }
+                )
                     .then((res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
 
-                await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ mother: `${new Date().getTime()}` } as Partial<Process>),
-                })
+                if (motherUpdatedInCase == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                const motherUpdatedInProcess: boolean = await fetch(
+                    "http://localhost:3000/processes?id=" + allProcesses[0],
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            mother: `${new Date().getTime()}`,
+                        } as Partial<Process>),
+                    }
+                )
                     .then((res) => {
-                        console.log(res);
-                        return res.json();
-                    })
-                    .then(async (res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
+
+                if (motherUpdatedInProcess == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
 
                 window.location.replace(`/app/cadastro/${casoId}/son`);
             } else if (step == "son") {
-                await fetch("http://localhost:3000/cases?id=" + casoId, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ sonId: patient.cpf }),
-                })
+                const sonUpdatedInCase: boolean = await fetch(
+                    "http://localhost:3000/cases?id=" + casoId,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ sonId: patient.cpf } as Partial<Case>),
+                    }
+                )
                     .then((res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
 
-                await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ son: `${new Date().getTime()}` } as Partial<Process>),
-                })
+                if (sonUpdatedInCase == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                const sonUpdatedInProcess: boolean = await fetch(
+                    "http://localhost:3000/processes?id=" + allProcesses[0],
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            son: `${new Date().getTime()}`,
+                        } as Partial<Process>),
+                    }
+                )
                     .then((res) => {
-                        console.log(res);
-                        return res.json();
-                    })
-                    .then(async (res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
+
+                if (sonUpdatedInProcess == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
 
                 window.location.replace(`/app/cadastro/${casoId}/father`);
             } else {
-                await fetch("http://localhost:3000/cases?id=" + casoId, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ fatherId: patient.cpf } as Partial<Case>),
-                })
+                const fatherUpdatedInCase: boolean = await fetch(
+                    "http://localhost:3000/cases?id=" + casoId,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ fatherId: patient.cpf } as Partial<Case>),
+                    }
+                )
                     .then((res) => {
-                        console.log(res);
-                        return res.json();
-                    })
-                    .then(async (res) => {
                         if (res.status != 200) {
                             toast.error("Algo deu errado :/", {
                                 position: "bottom-center",
                                 theme: "light",
                             });
 
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
+
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
 
-                await fetch("http://localhost:3000/processes?id=" + allProcesses[0], {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        status: "FEITO",
-                        father: `${new Date().getTime()}`,
-                    } as Partial<Process>),
-                })
+                if (fatherUpdatedInCase == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                const fatherUpdatedInProcess: boolean = await fetch(
+                    "http://localhost:3000/processes?id=" + allProcesses[0],
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            status: "FEITO",
+                            father: `${new Date().getTime()}`,
+                        } as Partial<Process>),
+                    }
+                )
                     .then((res) => {
-                        console.log(res);
-                        return res.json();
-                    })
-                    .then(async (res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
 
-                await fetch("http://localhost:3000/processes?id=" + allProcesses[1], {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ status: "FAZENDO" } as Partial<Process>),
-                })
+                if (fatherUpdatedInProcess == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                const nextProcessUpdated: boolean = await fetch(
+                    "http://localhost:3000/processes?id=" + allProcesses[1],
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ status: "FAZENDO" } as Partial<Process>),
+                    }
+                )
                     .then((res) => {
-                        console.log(res);
-                        return res.json();
-                    })
-                    .then(async (res) => {
                         if (res.status != 200) {
-                            toast.error("Algo deu errado :/", {
-                                position: "bottom-center",
-                                theme: "light",
-                            });
-
-                            return;
+                            return false;
                         }
+
+                        return true;
                     })
                     .catch(() => {
-                        toast.error("Algo deu errado :/", {
-                            position: "bottom-center",
-                            theme: "light",
-                        });
+                        return false;
                     });
+
+                if (nextProcessUpdated == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
 
                 window.location.replace(`/app/caso/${casoId}`);
             }
@@ -447,6 +522,13 @@ export default function Cadastro() {
                                 flexDirection: "column",
                                 gap: "0.5rem",
                             }}>
+                            <FormLabel>Data de nascimento</FormLabel>
+                            <Input
+                                sx={{ width: "100%" }}
+                                placeholder="Nome..."
+                                value={nascimento}
+                                onChange={(event) => setNascimento(event.target.value)}
+                            />
                             <FormLabel>Sexo</FormLabel>
                             <RadioGroup
                                 value={gender}
@@ -641,7 +723,7 @@ export default function Cadastro() {
                             flexDirection: "row",
                             gap: "1rem",
                         }}>
-                        <Button onClick={() => handleNextStep()}>Finalizar</Button>
+                        <Button onClick={() => handleNextStep()}>Concluido</Button>
                     </Box>
                 </Box>
             </Box>

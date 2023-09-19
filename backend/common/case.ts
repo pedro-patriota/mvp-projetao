@@ -1,7 +1,5 @@
 import { nanoid } from 'nanoid'
 import z from 'zod'
-import { newProcess, processNameList } from './process'
-import { ProcessModel } from '../src/model/processes/model'
 
 export const CaseSchema = z.object({
     id: z.string(),
@@ -9,6 +7,8 @@ export const CaseSchema = z.object({
     fatherId: z.string(),
     motherId: z.string(),
     processes: z.array(z.string()),
+    excluido: z.enum(['NAO ANALISADO', 'SIM', 'NAO']),
+    probabilidade: z.number(),
 })
 
 export type Case = z.infer<typeof CaseSchema>
@@ -20,6 +20,8 @@ export function newCase(partialCase?: Partial<Case>) {
         fatherId: '',
         motherId: '',
         processes: [],
+        excluido: 'NAO ANALISADO',
+        probabilidade: 0.5,
     }
 
     if (partialCase) {
