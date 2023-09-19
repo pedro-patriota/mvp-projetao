@@ -434,8 +434,7 @@ export default function Sequenciamento() {
                         const caseId = line[0].slice(2);
                         const person = line[0].slice(0, 1);
                         const genes = line.splice(1);
-
-                        console.log(genes);
+                        genes.pop();
 
                         await fetch("http://localhost:3000/sequencing/genes", {
                             method: "POST",
