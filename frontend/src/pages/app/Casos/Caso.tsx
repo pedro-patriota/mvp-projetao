@@ -4,11 +4,12 @@ import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
 import { Process, ProcessName } from "../../../../../backend/common/process";
 import { Box, Button, Stack, Table, Typography } from "@mui/joy";
-import Modal from '@mui/material/Modal';
+import Modal from "@mui/material/Modal";
 import Barloader from "react-spinners/BarLoader";
 import { AdsClick, Visibility } from "@mui/icons-material";
 import { StyledModalBackdrop } from "@mui/joy/Modal/Modal";
-import {ModalCadastro} from "../Cadastro/ModalCadastro";
+import { ModalCadastro } from "../Cadastro/ModalCadastro";
+import { Patient } from "../../../../../backend/common/patients";
 
 const override: React.CSSProperties = {
     display: "block",
@@ -16,42 +17,58 @@ const override: React.CSSProperties = {
     borderColor: "red",
 };
 
-const URL = "http://localhost:3000/cases?id=";
-
 interface CasoRowProps {
     id: string;
     caseData: Case;
 }
 
+const loadPatient = async (cpf: string): Promise<Patient | undefined> => {
+    const result = await fetch("http://localhost:3000/patients?cpf=" + cpf, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((res) => res.json())
+        .then((response: Patient) => response)
+        .catch((e) => {
+            console.log(e);
+
+            return undefined;
+        });
+
+    return result;
+};
+
 function CasoRow({ id, caseData }: CasoRowProps) {
     const [processData, setProcessData] = useState<(Process & { updatedAt: string }) | undefined>(
         undefined
-        );
-        
-        const navigate = useNavigate();
-        
-        useEffect(() => {
-            const loader = async () => {
+    );
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const loader = async () => {
             await fetch("http://localhost:3000/processes?id=" + id, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             })
-            .then(async (res) => {
-                if (res.status === 500) {
-                    toast.error("Algo deu errado :/", {
-                        position: "bottom-center",
-                        theme: "light",
+                .then(async (res) => {
+                    if (res.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
                         });
-                        
+
                         return;
                     }
-                    
+
                     await res
-                    .json()
-                    .then((response: Process) => {
-                        setProcessData({ ...response } as Process & { updatedAt: string });
+                        .json()
+                        .then((response: Process) => {
+                            setProcessData({ ...response } as Process & { updatedAt: string });
                         })
                         .catch(() => {
                             toast.error("Algo deu errado :/", {
@@ -59,9 +76,9 @@ function CasoRow({ id, caseData }: CasoRowProps) {
                                 theme: "light",
                             });
                         });
-                    })
-                    .catch(() => {
-                        toast.error("Algo deu errado :/", {
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
                         position: "bottom-center",
                         theme: "light",
                     });
@@ -71,11 +88,9 @@ function CasoRow({ id, caseData }: CasoRowProps) {
         loader();
     }, []);
 
-    
-    
     const handleAction = async () => {
         if (processData == undefined) return;
-        
+
         const actions: Record<ProcessName, () => Promise<void>> = {
             CADASTRO: async () => {
                 navigate(`/app/cadastro/${caseData.id}/mother`);
@@ -100,8 +115,7 @@ function CasoRow({ id, caseData }: CasoRowProps) {
         if (processData == undefined) return;
         const actions: Record<ProcessName, () => Promise<void>> = {
             CADASTRO: async () => {
-                
-                ModalCadastro();                
+                ModalCadastro();
             },
             COLETA: async () => {},
             ANALISE: async () => {},
@@ -114,7 +128,6 @@ function CasoRow({ id, caseData }: CasoRowProps) {
 
     return (
         <tr>
-            
             <td>{processData == undefined ? "CARREGANDO..." : processData.name}</td>
             <td>
                 {processData == undefined
@@ -178,103 +191,65 @@ function CasoRow({ id, caseData }: CasoRowProps) {
 }
 
 export default function Caso() {
-    const [caseData, setCaseData] = React.useState<Case | undefined>(undefined);
-    const [loading, setLoading] = React.useState<boolean>(true);
+    const [mother, setMother] = useState<Patient | undefined>(undefined);
+    const [father, setFather] = useState<Patient | undefined>(undefined);
+    const [son, setSon] = useState<Patient | undefined>(undefined);
+    const [caseData, setCaseData] = useState<Case | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(true);
     const { id } = useParams();
-
-    const fetchPatientNames = async () => {
-        try {
-          const motherResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.motherId}`);
-          if (!motherResponse.ok) {
-            throw new Error('Erro na solicitação da mãe');
-          }
-          const mother = await motherResponse.json();
-      
-          const sonResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.sonId}`);
-          if (!sonResponse.ok) {
-            throw new Error('Erro na solicitação do filho');
-          }
-          const son = await sonResponse.json();
-      
-          const fatherResponse = await fetch(`http://localhost:3000/patients?cpf=${caseData?.fatherId}`);
-          if (!fatherResponse.ok) {
-            throw new Error('Erro na solicitação do pai');
-          }
-          const father = await fatherResponse.json();
-      
-          console.log(mother, father, son);
-      
-          return {
-            mother: mother ? mother.name : 'Não registrado',
-            son: son ? son.name : 'Não registrado',
-            father: father ? father.name : 'Não registrado',
-          };
-        } catch (error) {
-          console.error('Erro ao buscar nomes de pacientes:', error);
-          return {
-            mother: 'Não registrado',
-            son: 'Não registrado',
-            father: 'Não registrado',
-          };
-        }
-      };
-      
-
-      useEffect(() => {
-        const loader = async () => {
-          if (id == undefined) return;
-      
-          await fetch(URL + id, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-            .then(async (res) => {
-              if (res.status === 500) {
-                toast.error('Algo deu errado :/', {
-                  position: 'bottom-center',
-                  theme: 'light',
-                });
-      
-                return;
-              }
-      
-              await res
-                .json()
-                .then(async (response) => {
-                  const caseWithNames = {
-                    ...response,
-                    processes: JSON.parse(response.processes),
-                    ...(await fetchPatientNames()), // Buscar nomes dos pacientes
-                  };
-      
-                  setCaseData(caseWithNames);
-                  setLoading(false);
-                })
-                .catch(() => {
-                  toast.error('Algo deu errado :/', {
-                    position: 'bottom-center',
-                    theme: 'light',
-                  });
-                });
-            })
-            .catch(() => {
-              toast.error('Algo deu errado :/', {
-                position: 'bottom-center',
-                theme: 'light',
-              });
-            });
-        };
-      
-        loader();
-      }, [caseData]);
 
     useEffect(() => {
         const loader = async () => {
-            if (caseData == undefined) return;
+            if (id == undefined) return;
 
-            await fetch("");
+            await fetch("http://localhost:3000/cases?id=" + id, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(async (res) => {
+                    if (res.status === 500) {
+                        toast.error("Algo deu errado :/", {
+                            position: "bottom-center",
+                            theme: "light",
+                        });
+
+                        return;
+                    }
+
+                    await res
+                        .json()
+                        .then(async (response: Case) => {
+                            const caseWithData = {
+                                ...response,
+                                processes: JSON.parse(response.processes as any as string),
+                            };
+
+                            const mother = await loadPatient(response.motherId);
+                            const father = await loadPatient(response.fatherId);
+                            const son = await loadPatient(response.sonId);
+
+                            setMother(mother);
+                            setFather(father);
+                            setSon(son);
+
+                            setCaseData(caseWithData);
+                            setLoading(false);
+                        })
+                        .catch(() => {
+                            toast.error("Algo deu errado :/", {
+                                position: "bottom-center",
+                                theme: "light",
+                            });
+                        });
+                })
+                .catch(() => {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+                });
         };
 
         loader();
@@ -290,8 +265,7 @@ export default function Caso() {
                 justifyContent: "center",
                 alignItems: "center",
             }}>
-
-           <Box
+            <Box
                 sx={{
                     width: "100%",
                     height: "100%",
@@ -308,7 +282,6 @@ export default function Caso() {
                         justifyContent: "center",
                         padding: "2rem",
                     }}>
-                    
                     <Box
                         sx={{
                             width: "100%",
@@ -339,32 +312,32 @@ export default function Caso() {
                                 <Stack direction="row" spacing={4}>
                                     <Typography level="body-md">
                                         Mãe:{" "}
-                                        {caseData.motherId == "" ? (
+                                        {mother == undefined ? (
                                             <Typography variant="solid" color="danger">
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.mother}</Typography>
+                                            <Typography>{mother.name}</Typography>
                                         )}
                                     </Typography>
                                     <Typography level="body-md">
                                         Filho:{" "}
-                                        {caseData.fatherId == "" ? (
+                                        {son == undefined ? (
                                             <Typography variant="solid" color="danger">
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.father}</Typography>
+                                            <Typography>{son.name}</Typography>
                                         )}
                                     </Typography>
                                     <Typography level="body-md">
                                         Suposto pai:{" "}
-                                        {caseData.sonId == "" ? (
+                                        {father == undefined ? (
                                             <Typography variant="solid" color="danger">
                                                 Não registrado
                                             </Typography>
                                         ) : (
-                                            <Typography>{caseData.son}</Typography>
+                                            <Typography>{father.name}</Typography>
                                         )}
                                     </Typography>
                                 </Stack>
