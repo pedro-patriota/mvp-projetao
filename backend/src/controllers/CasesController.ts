@@ -1,32 +1,50 @@
 import { Request, Response } from 'express'
-import { Case, CaseSchema } from '../../common/case'
-import { nanoid } from 'nanoid'
+import { Case, CaseSchema, newCase } from '../../common/case'
 import { CaseModel } from '../model/case/model'
 import { z } from 'zod'
+import { ReadAPPData, WriteAPPData } from '../utils/jsonHandler'
+import { Process, newProcess, processNameList } from '../../common/process'
+import { ProcessModel } from '../model/processes/model'
 
 export async function CreateCase(request: Request, response: Response) {
-    const schema = CaseSchema.omit({ id: true })
-    const id = nanoid()
+    let appData = ReadAPPData()
 
-    const parsedCase = schema.safeParse({ ...request.body, processes: request.body.processes })
+    const id = appData.currentCase
 
-    if (parsedCase.success) {
-        const tempCase: Case = {
-            id,
-            ...request.body,
-            processes: JSON.stringify(request.body.processes),
+    appData.currentCase += 1
+
+    WriteAPPData(appData)
+
+    let processes: string[] = []
+
+    for (let i = 0; i < processNameList.length; i++) {
+        let process: Process = newProcess({ name: processNameList[i] })
+
+        if (processNameList[i] == 'CADASTRO') {
+            process = { ...process, status: 'FAZENDO' }
         }
 
-        await CaseModel.create(tempCase)
+        await ProcessModel.create(process)
             .then(() => {
-                response.status(201).send({ id })
+                processes.push(process.id)
             })
             .catch((e) => {
+                console.log(e)
                 response.status(500).send(e)
+
+                return
             })
-    } else {
-        response.status(400).send(parsedCase.error)
     }
+
+    const tempCase: Case = newCase({ id: `${new Date().getFullYear()}-${id}`, processes })
+
+    await CaseModel.create({ ...tempCase, processes: JSON.stringify(tempCase.processes) })
+        .then(() => {
+            response.status(200).send({ id: `${new Date().getFullYear()}-${id}` })
+        })
+        .catch((e) => {
+            response.status(500).send(e)
+        })
 }
 
 export async function GetCase(request: Request, response: Response) {

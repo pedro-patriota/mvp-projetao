@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/joy/Box";
 import Typography from "@mui/joy/Typography";
 import Spreadsheet from "react-spreadsheet";
-import { newTable } from "./tableUtils";
+import { analise, newTable } from "./tableUtils";
 import { useNavigate, useParams } from "react-router-dom";
 import { Case } from "../../../../../backend/common/case";
 import { toast } from "react-toastify";
@@ -18,6 +18,8 @@ const override: React.CSSProperties = {
 };
 
 const loadPatient = async (cpf: string): Promise<Patient | undefined> => {
+    if (cpf == "") return undefined;
+
     const result = await fetch("http://localhost:3000/patients?cpf=" + cpf, {
         method: "GET",
         headers: {
@@ -42,7 +44,7 @@ export default function Analise() {
     const navigate = useNavigate();
 
     const handleFinishAnalise = async () => {
-        if (caseData == undefined) {
+        if (caseData == undefined || tableData == undefined) {
             return;
         }
 
@@ -58,11 +60,6 @@ export default function Analise() {
         )
             .then((res) => {
                 if (res.status === 500) {
-                    toast.error("Algo deu errado :/", {
-                        position: "bottom-center",
-                        theme: "light",
-                    });
-
                     return false;
                 }
 
@@ -70,16 +67,15 @@ export default function Analise() {
             })
             .catch((e) => {
                 console.log(e);
-
-                toast.error("Algo deu errado :/", {
-                    position: "bottom-center",
-                    theme: "light",
-                });
-
                 return false;
             });
 
         if (result == false) {
+            toast.error("Algo deu errado :/", {
+                position: "bottom-center",
+                theme: "light",
+            });
+
             return;
         }
 
@@ -113,7 +109,40 @@ export default function Analise() {
                 return false;
             });
 
-        if (result) {
+        if (result == false) {
+            toast.error("Algo deu errado :/", {
+                position: "bottom-center",
+                theme: "light",
+            });
+
+            return;
+        }
+
+        const resultados = analise(tableData);
+
+        result = await fetch("http://localhost:3000/cases?id=" + casoId, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                excluido: resultados[0] ? "SIM" : "NAO",
+                probabilidade: resultados[1],
+            } as Partial<Case>),
+        })
+            .then((res) => {
+                if (res.status == 500) {
+                    return false;
+                }
+
+                return true;
+            })
+            .catch((e) => {
+                console.log(e);
+                return false;
+            });
+
+        if (result == true) {
             toast.success("Análise finalizada", {
                 position: "bottom-center",
                 theme: "light",
@@ -251,8 +280,8 @@ export default function Analise() {
                                 justifyContent: "space-between",
                                 alignItems: "center",
                             }}>
-                            <Typography level="body-md">Caso {casoId}</Typography>
-                            <Typography level="body-lg">Análise Genotípica</Typography>
+                            <Typography level="h4">Caso {casoId}</Typography>
+                            <Typography level="h3">Análise Genotípica</Typography>
                             <Box sx={{ display: "flex", gap: "0.5rem" }}></Box>
                         </Box>
                         <Spreadsheet data={tableData} columnLabels={columns} />

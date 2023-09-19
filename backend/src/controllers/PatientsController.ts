@@ -4,9 +4,7 @@ import { Patient, PatientSchema } from '../../common/patients'
 import { z } from 'zod'
 
 export async function CreatePatient(request: Request, response: Response) {
-    const schema = PatientSchema.omit({ cpf: true })
-
-    const parsedPatient = schema.safeParse(request.body)
+    const parsedPatient = PatientSchema.safeParse(request.body)
 
     if (parsedPatient.success) {
         const tempPatient: Patient = {
@@ -16,7 +14,7 @@ export async function CreatePatient(request: Request, response: Response) {
 
         await PatientsModel.create(tempPatient)
             .then(() => {
-                response.status(201).send({ cpf: tempPatient.cpf })
+                response.status(200).send({ cpf: tempPatient.cpf })
             })
             .catch((e) => {
                 response.status(500).send(e)

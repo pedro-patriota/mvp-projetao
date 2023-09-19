@@ -1,50 +1,18 @@
 import React from "react";
 import Box from "@mui/joy/Box";
-import IconButton from "@mui/joy/IconButton";
-// custom
-import { Outlet } from "react-router-dom";
-import { CssVarsProvider, useColorScheme } from "@mui/joy/styles";
-
-import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
-import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import { Outlet, useNavigate } from "react-router-dom";
+import { CssVarsProvider } from "@mui/joy/styles";
 import CssBaseline from "@mui/joy/CssBaseline";
 import "./App.css";
 import Button from "@mui/joy/Button";
 import Link from "@mui/joy/Link";
 import Logo from "../components/Logo";
 
-function ColorSchemeToggle() {
-    const { mode, setMode } = useColorScheme();
-    const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
-    if (!mounted) {
-        return <IconButton variant="soft" color="neutral" />;
-    }
-    return (
-        <IconButton
-            id="toggle-mode"
-            variant="soft"
-            color="neutral"
-            onClick={() => {
-                if (mode === "light") {
-                    setMode("dark");
-                } else {
-                    setMode("light");
-                }
-            }}>
-            {mode === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
-        </IconButton>
-    );
-}
-
 export default function AppLayout() {
+    const navigate = useNavigate();
+
     return (
         <CssVarsProvider disableTransitionOnChange>
-            {/* <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
-                <ColorSchemeToggle />
-            </div> */}
             <CssBaseline />
             <Box
                 sx={{
@@ -82,14 +50,10 @@ export default function AppLayout() {
                         <Link href="/app/sequenciamentos" fontWeight="lg">
                             Sequenciamentos
                         </Link>
-                        <Link href="/app/analise" fontWeight="lg">
-                            Analise
-                        </Link>
-                        
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
                         <Button variant="soft">Costa</Button>
-                        <Button>Sair</Button>
+                        <Button onClick={() => navigate("/signin")}>Sair</Button>
                     </Box>
                 </Box>
                 <Outlet></Outlet>

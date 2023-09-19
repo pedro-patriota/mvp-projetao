@@ -283,7 +283,7 @@ export default function PaginaPacientes() {
                         data-testid="loader"
                     />
                 ) : (
-                    <>
+                    <Box>
                         <Box
                             sx={{
                                 display: "flex",
@@ -346,10 +346,26 @@ export default function PaginaPacientes() {
                                                 style={{
                                                     cursor: "pointer",
                                                 }}>
-                                                <th scope="row">{row.cpf}</th>
-                                                <td>{row.name}</td>
-                                                <td>{row.gender}</td>
-                                                <td>{row.phone}</td>
+                                                <th scope="row">
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {row.cpf}
+                                                    </Typography>
+                                                </th>
+                                                <td>
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {row.name}
+                                                    </Typography>
+                                                </td>
+                                                <td>
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {row.gender}
+                                                    </Typography>
+                                                </td>
+                                                <td>
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {row.phone}
+                                                    </Typography>
+                                                </td>
                                             </tr>
                                         );
                                     })}
@@ -431,7 +447,7 @@ export default function PaginaPacientes() {
                                 </tr>
                             </tfoot>
                         </Table>
-                    </>
+                    </Box>
                 )}
             </Box>
         </Box>

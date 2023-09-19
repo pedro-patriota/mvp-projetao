@@ -4,7 +4,6 @@ import z from 'zod'
 export const processNameList = ['CADASTRO', 'COLETA', 'SEQUENCIAMENTO', 'ANALISE', 'DOCUMENTAÇÃO', 'CONCLUÍDO'] as const
 export const ProcessNameSchema = z.enum(processNameList)
 export type ProcessName = z.infer<typeof ProcessNameSchema>
-
 const ProcessStatusSchema = z.enum(['PENDENTE', 'FAZENDO', 'FEITO'])
 export type ProcessStatus = z.infer<typeof ProcessStatusSchema>
 

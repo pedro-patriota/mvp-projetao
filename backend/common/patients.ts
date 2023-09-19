@@ -7,6 +7,7 @@ export type PatientSex = z.infer<typeof PatientSexSchema>
 
 export const PatientSchema = z.object({
     name: z.string(),
+    nascimento: z.string(),
     phone: z.string(),
     naturality: z.string(),
     cpf: z.string(),
@@ -25,12 +26,13 @@ export const PatientSchema = z.object({
     irmaoGemeo: z.string(),
     transplanteMedula: z.string(),
     transfusaoSangue: z.string(),
-    genes: z.array(z.array(z.string())),
+    genes: z.array(z.string()),
 })
 
 export const newPatient = (patient?: Partial<Patient>) => {
     const tempPatient: Patient = {
         cpf: nanoid(),
+        nascimento: '',
         name: '',
         phone: '',
         naturality: '',

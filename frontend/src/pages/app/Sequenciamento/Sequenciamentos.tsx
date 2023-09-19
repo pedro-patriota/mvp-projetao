@@ -1,4 +1,3 @@
-import * as React from "react";
 import Box from "@mui/joy/Box";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
@@ -16,12 +15,13 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { visuallyHidden } from "@mui/utils";
 import { Button } from "@mui/joy";
 import { Add } from "@mui/icons-material";
-import { Sequencing, newSequencing } from "../../../../../backend/common/sequencing";
+import { Sequencing } from "../../../../../backend/common/sequencing";
 import { toast } from "react-toastify";
 import Barloader from "react-spinners/BarLoader";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState, MouseEvent, CSSProperties, Fragment } from "react";
 
-const override: React.CSSProperties = {
+const override: CSSProperties = {
     display: "block",
     margin: "0 auto",
     borderColor: "red",
@@ -103,14 +103,14 @@ const headCells: readonly HeadCell[] = [
 ];
 
 interface EnhancedTableProps {
-    onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+    onRequestSort: (event: MouseEvent<unknown>, property: keyof Data) => void;
     order: Order;
     orderBy: string;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
     const { order, orderBy, onRequestSort } = props;
-    const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+    const createSortHandler = (property: keyof Data) => (event: MouseEvent<unknown>) => {
         onRequestSort(event, property);
     };
 
@@ -173,16 +173,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 export default function Sequenciamentos() {
-    const [order, setOrder] = React.useState<Order>("asc");
-    const [orderBy, setOrderBy] = React.useState<keyof Data>("id");
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const [sequencingData, setSequencingData] = React.useState<Data[] | undefined>(undefined);
-    const [loading, setLoading] = React.useState<boolean>(true);
+    const [order, setOrder] = useState<Order>("asc");
+    const [orderBy, setOrderBy] = useState<keyof Data>("id");
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [sequencingData, setSequencingData] = useState<Data[] | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const navigate = useNavigate();
 
-    React.useEffect(() => {
+    useEffect(() => {
         const loader = async () => {
             await fetch("http://localhost:3000/sequencing/all", {
                 method: "GET",
@@ -236,16 +236,14 @@ export default function Sequenciamentos() {
     }, []);
 
     const createNewSequencing = async () => {
-        const tempSequencing = newSequencing();
-
         await fetch("http://localhost:3000/sequencing", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(tempSequencing),
         })
             .then((res) => {
+                console.log(res);
                 if (res.status === 500) {
                     toast.error("Algo deu errado :/", {
                         position: "bottom-center",
@@ -255,7 +253,11 @@ export default function Sequenciamentos() {
                     return;
                 }
 
-                navigate(`/app/sequenciamento/${tempSequencing.id}`);
+                return res.json();
+            })
+            .then((response) => {
+                console.log(response);
+                navigate(`/app/sequenciamento/${response.id}`);
             })
             .catch((e) => {
                 console.log(e);
@@ -267,7 +269,7 @@ export default function Sequenciamentos() {
             });
     };
 
-    const handleRequestSort = (_: React.MouseEvent<unknown>, property: keyof Data) => {
+    const handleRequestSort = (_: MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
@@ -388,147 +390,162 @@ export default function Sequenciamentos() {
                         </Tooltip>
                     </Box>
                 </Box>
-                <Table
-                    aria-labelledby="tableTitle"
-                    hoverRow
-                    sx={{
-                        "--TableCell-headBackground": "transparent",
-                        "--TableCell-selectedBackground": (theme) =>
-                            theme.vars.palette.success.softBg,
-                        "& thead th:nth-child(1)": {
-                            width: "25%",
-                        },
-                        "& thead th:nth-child(2)": {
-                            width: "25%",
-                        },
-                        "& thead th:nth-child(3)": {
-                            width: "25%",
-                        },
-                        "& thead th:nth-child(4)": {
-                            width: "25%",
-                        },
-                    }}>
-                    <EnhancedTableHead
-                        order={order}
-                        orderBy={orderBy}
-                        onRequestSort={handleRequestSort}
-                    />
-                    <tbody>
-                        {stableSort(sequencingData, getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
-                                return (
-                                    <React.Fragment key={row.id}>
-                                        <tr
-                                            onClick={() =>
-                                                navigate(`/app/sequenciamento/${row.id}`)
-                                            }
-                                            tabIndex={-1}
-                                            style={{
-                                                cursor: "pointer",
-                                            }}>
-                                            <th scope="row">{row.id}</th>
-                                            <td>
-                                                {row.didBy == "" ? (
-                                                    <Typography
-                                                        variant="solid"
-                                                        color="danger"
-                                                        sx={{ maxWidth: "max-content" }}
-                                                        fontWeight="lg">
-                                                        NÃO REGISTRADO
+                <Box>
+                    <Table
+                        aria-labelledby="tableTitle"
+                        hoverRow
+                        sx={{
+                            "--TableCell-headBackground": "transparent",
+                            "--TableCell-selectedBackground": (theme) =>
+                                theme.vars.palette.success.softBg,
+                            "& thead th:nth-child(1)": {
+                                width: "25%",
+                            },
+                            "& thead th:nth-child(2)": {
+                                width: "25%",
+                            },
+                            "& thead th:nth-child(3)": {
+                                width: "25%",
+                            },
+                            "& thead th:nth-child(4)": {
+                                width: "25%",
+                            },
+                        }}>
+                        <EnhancedTableHead
+                            order={order}
+                            orderBy={orderBy}
+                            onRequestSort={handleRequestSort}
+                        />
+                        <tbody>
+                            {stableSort(sequencingData, getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <Fragment key={row.id}>
+                                            <tr
+                                                onClick={() =>
+                                                    navigate(`/app/sequenciamento/${row.id}`)
+                                                }
+                                                tabIndex={-1}
+                                                style={{
+                                                    cursor: "pointer",
+                                                }}>
+                                                <th scope="row">
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {row.id}
                                                     </Typography>
-                                                ) : (
-                                                    <Typography>{row.didBy}</Typography>
-                                                )}
-                                            </td>
-                                            <td>{new Date(row.createdAt).toLocaleString()}</td>
-                                            <td>
-                                                <Typography>
-                                                    {((row as any).cases as string[]).length}
-                                                </Typography>
-                                            </td>
-                                        </tr>
-                                    </React.Fragment>
-                                );
-                            })}
-                        {emptyRows > 0 && (
-                            <tr
-                                style={
-                                    {
-                                        height: `calc(${emptyRows} * 40px)`,
-                                        "--TableRow-hoverBackground": "transparent",
-                                    } as React.CSSProperties
-                                }>
-                                <td colSpan={4} />
-                            </tr>
-                        )}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan={4}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 2,
-                                        justifyContent: "flex-end",
-                                    }}>
-                                    <FormControl orientation="horizontal" size="sm">
-                                        <FormLabel>Rows per page:</FormLabel>
-                                        <Select
-                                            onChange={handleChangeRowsPerPage}
-                                            value={rowsPerPage}>
-                                            <Option value={5}>5</Option>
-                                            <Option value={10}>10</Option>
-                                            <Option value={15}>15</Option>
-                                        </Select>
-                                    </FormControl>
-                                    <Typography textAlign="center" sx={{ minWidth: 80 }}>
-                                        {labelDisplayedRows({
-                                            from:
-                                                sequencingData.length === 0
-                                                    ? 0
-                                                    : page * rowsPerPage + 1,
-                                            to: getLabelDisplayedRowsTo(),
-                                            count:
-                                                sequencingData.length === -1
-                                                    ? -1
-                                                    : sequencingData.length,
-                                        })}
-                                    </Typography>
-                                    <Box sx={{ display: "flex", gap: 1 }}>
-                                        <IconButton
-                                            size="sm"
-                                            color="neutral"
-                                            variant="outlined"
-                                            disabled={page === 0}
-                                            onClick={() => handleChangePage(page - 1)}
-                                            sx={{ bgcolor: "background.surface" }}>
-                                            <KeyboardArrowLeftIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            size="sm"
-                                            color="neutral"
-                                            variant="outlined"
-                                            disabled={
-                                                sequencingData.length !== -1
-                                                    ? page >=
-                                                      Math.ceil(
-                                                          sequencingData.length / rowsPerPage
-                                                      ) -
-                                                          1
-                                                    : false
-                                            }
-                                            onClick={() => handleChangePage(page + 1)}
-                                            sx={{ bgcolor: "background.surface" }}>
-                                            <KeyboardArrowRightIcon />
-                                        </IconButton>
+                                                </th>
+                                                <td>
+                                                    {row.didBy == "" ? (
+                                                        <Typography
+                                                            variant="solid"
+                                                            color="danger"
+                                                            sx={{
+                                                                maxWidth: "max-content",
+                                                                textAlign: "start",
+                                                            }}
+                                                            fontWeight="lg">
+                                                            NÃO REGISTRADO
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography sx={{ textAlign: "start" }}>
+                                                            {row.didBy}
+                                                        </Typography>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {new Date(row.createdAt).toLocaleString()}
+                                                    </Typography>
+                                                </td>
+                                                <td>
+                                                    <Typography sx={{ textAlign: "start" }}>
+                                                        {((row as any).cases as string[]).length}
+                                                    </Typography>
+                                                </td>
+                                            </tr>
+                                        </Fragment>
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <tr
+                                    style={
+                                        {
+                                            height: `calc(${emptyRows} * 40px)`,
+                                            "--TableRow-hoverBackground": "transparent",
+                                        } as CSSProperties
+                                    }>
+                                    <td colSpan={4} />
+                                </tr>
+                            )}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colSpan={4}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 2,
+                                            justifyContent: "flex-end",
+                                        }}>
+                                        <FormControl orientation="horizontal" size="sm">
+                                            <FormLabel>Rows per page:</FormLabel>
+                                            <Select
+                                                onChange={handleChangeRowsPerPage}
+                                                value={rowsPerPage}>
+                                                <Option value={5}>5</Option>
+                                                <Option value={10}>10</Option>
+                                                <Option value={15}>15</Option>
+                                            </Select>
+                                        </FormControl>
+                                        <Typography textAlign="center" sx={{ minWidth: 80 }}>
+                                            {labelDisplayedRows({
+                                                from:
+                                                    sequencingData.length === 0
+                                                        ? 0
+                                                        : page * rowsPerPage + 1,
+                                                to: getLabelDisplayedRowsTo(),
+                                                count:
+                                                    sequencingData.length === -1
+                                                        ? -1
+                                                        : sequencingData.length,
+                                            })}
+                                        </Typography>
+                                        <Box sx={{ display: "flex", gap: 1 }}>
+                                            <IconButton
+                                                size="sm"
+                                                color="neutral"
+                                                variant="outlined"
+                                                disabled={page === 0}
+                                                onClick={() => handleChangePage(page - 1)}
+                                                sx={{ bgcolor: "background.surface" }}>
+                                                <KeyboardArrowLeftIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                size="sm"
+                                                color="neutral"
+                                                variant="outlined"
+                                                disabled={
+                                                    sequencingData.length !== -1
+                                                        ? page >=
+                                                          Math.ceil(
+                                                              sequencingData.length / rowsPerPage
+                                                          ) -
+                                                              1
+                                                        : false
+                                                }
+                                                onClick={() => handleChangePage(page + 1)}
+                                                sx={{ bgcolor: "background.surface" }}>
+                                                <KeyboardArrowRightIcon />
+                                            </IconButton>
+                                        </Box>
                                     </Box>
-                                </Box>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </Table>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </Table>
+                </Box>
             </Box>
         </Box>
     );

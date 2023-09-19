@@ -17,6 +17,7 @@ import Caso from "./pages/app/Casos/Caso";
 import Cadastro from "./pages/app/Cadastro/Cadastro";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Documentos from "./pages/app/Documentacao/Documentos";
 
 export default function FilesExample() {
     return (
@@ -44,6 +45,7 @@ export default function FilesExample() {
                             element={<PaginaPacientes></PaginaPacientes>}></Route>
                         <Route path="paciente/:pacientCPF" element={<Paciente></Paciente>}></Route>
                         <Route path="coleta/:casoId/:processId" element={<Coleta />}></Route>
+                        <Route path="documentos/:casoId" element={<Documentos />}></Route>
                     </Route>
                 </Routes>
             </BrowserRouter>

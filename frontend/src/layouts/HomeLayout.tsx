@@ -50,9 +50,6 @@ export default function HomeLayout() {
     const navigate = useNavigate();
     return (
         <CssVarsProvider disableTransitionOnChange>
-            {/* <div style={{ position: "absolute", bottom: 12, right: 12, zIndex: 2 }}>
-                <ColorSchemeToggle />
-            </div> */}
             <CssBaseline />
             <Box
                 sx={{
@@ -83,17 +80,12 @@ export default function HomeLayout() {
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 2.5 }}>
                         <Link href="/">Home</Link>
                         <Link href="about">Sobre</Link>
-                        <Link href="info">Acesso à informação</Link>
-                        <Link href="suporte">Suporte</Link>
                     </Box>
-
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
-                        <Button variant="soft" onClick = {() => navigate("/signin") }>
+                        <Button variant="soft" onClick={() => navigate("/signin")}>
                             Entrar
                         </Button>
-                        <Button onClick = {() => navigate("/signup") }>
-                            Cadastrar
-                        </Button>
+                        <Button onClick={() => navigate("/signup")}>Cadastrar</Button>
                     </Box>
                 </Box>
                 <Outlet></Outlet>

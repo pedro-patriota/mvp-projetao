@@ -275,6 +275,7 @@ export default function Sequenciamento() {
                 },
             })
                 .then((res) => {
+                    console.log(res);
                     if (res.status === 500) {
                         toast.error("Algo deu errado :/", {
                             position: "bottom-center",
@@ -287,13 +288,13 @@ export default function Sequenciamento() {
                     return res.json();
                 })
                 .then((res: Sequencing & { createdAt: string; updatedAt: string }) => {
+                    console.log(res);
                     const response = { ...res, cases: JSON.parse(res.cases as any as string) };
 
                     setSequencingData(response);
                 })
                 .catch((e) => {
                     console.log(e);
-
                     toast.error("Algo deu errado :/", {
                         position: "bottom-center",
                         theme: "light",
@@ -536,7 +537,7 @@ export default function Sequenciamento() {
                                             justifyContent: "space-between",
                                             alignItems: "center",
                                         }}>
-                                        <Typography level="body-lg">
+                                        <Typography level="h3">
                                             Sequenciamento {sequenciamentoId}
                                         </Typography>
                                         {casesData == undefined ? (
