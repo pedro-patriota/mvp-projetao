@@ -3,12 +3,13 @@ import Box from "@mui/joy/Box";
 import Typography from "@mui/joy/Typography";
 import Spreadsheet from "react-spreadsheet";
 import { newTable } from "./tableUtils";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Case } from "../../../../../backend/common/case";
 import { toast } from "react-toastify";
 import { Patient } from "../../../../../backend/common/patients";
 import Barloader from "react-spinners/BarLoader";
 import { Button } from "@mui/joy";
+import { Process } from "../../../../../backend/common/process";
 
 const override: React.CSSProperties = {
     display: "block",
@@ -38,6 +39,89 @@ export default function Analise() {
     const { casoId } = useParams();
     const [tableData, setTableData] = useState<{ value: string }[][] | undefined>(undefined);
     const [caseData, setCaseData] = useState<Case | undefined>(undefined);
+    const navigate = useNavigate();
+
+    const handleFinishAnalise = async () => {
+        if (caseData == undefined) {
+            return;
+        }
+
+        let result: boolean = await fetch(
+            "http://localhost:3000/processes?id=" + caseData.processes[3],
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status: "FEITO" } as Partial<Process>),
+            }
+        )
+            .then((res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return false;
+                }
+
+                return true;
+            })
+            .catch((e) => {
+                console.log(e);
+
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+
+                return false;
+            });
+
+        if (result == false) {
+            return;
+        }
+
+        result = await fetch("http://localhost:3000/processes?id=" + caseData.processes[4], {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: "FAZENDO" } as Partial<Process>),
+        })
+            .then((res) => {
+                if (res.status === 500) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return false;
+                }
+
+                return true;
+            })
+            .catch((e) => {
+                console.log(e);
+
+                toast.error("Algo deu errado :/", {
+                    position: "bottom-center",
+                    theme: "light",
+                });
+
+                return false;
+            });
+
+        if (result) {
+            toast.success("Análise finalizada", {
+                position: "bottom-center",
+                theme: "light",
+            });
+
+            navigate(`/app/caso/${caseData.id}`);
+        }
+    };
 
     useEffect(() => {
         if (caseData == undefined) return;
@@ -90,7 +174,6 @@ export default function Analise() {
                     return res.json();
                 })
                 .then((response: Case) => {
-                    console.log(response);
                     setCaseData({
                         ...response,
                         processes: JSON.parse(response.processes as any as string),
@@ -111,14 +194,17 @@ export default function Analise() {
 
     const columns = [
         "Abigal",
-        "Global Filer",
+        "Global Filter",
         "Fusion_6c",
         "Fusion",
         "PP21",
         "Loco",
         "Mãe",
-        "Suposto Pai",
+        "Mãe",
         "Filho",
+        "Filho",
+        "Suposto Pai",
+        "Suposto Pai",
         "Obrigatório",
         "Exclusão",
         "Observações",
@@ -167,12 +253,12 @@ export default function Analise() {
                             }}>
                             <Typography level="body-md">Caso {casoId}</Typography>
                             <Typography level="body-lg">Análise Genotípica</Typography>
-                            <Box sx={{ display: "flex", gap: "0.5rem" }}>
-                                <Button>Auditoria</Button>
-                            </Box>
+                            <Box sx={{ display: "flex", gap: "0.5rem" }}></Box>
                         </Box>
                         <Spreadsheet data={tableData} columnLabels={columns} />
-                        <Button sx={{ placeSelf: "end" }}>Realizar analise</Button>
+                        <Button onClick={() => handleFinishAnalise()} sx={{ placeSelf: "end" }}>
+                            Finalizar análise
+                        </Button>
                     </>
                 )}
             </Box>

@@ -1,23 +1,9 @@
-function processArray(arr: string): string[] {
-    const parsedArray: string[] = JSON.parse(arr);
-
-    const result: string[] = [];
-
-    for (let i = 0; i < parsedArray.length; i += 2) {
-        if (i + 1 < parsedArray.length) {
-            result.push(`${parsedArray[i]} ${parsedArray[i + 1]}`);
-        } else {
-            result.push(parsedArray[i]);
-        }
-    }
-
-    return result;
-}
+import { toast } from "react-toastify";
 
 export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: string) => {
-    const mother: string[] = processArray(motherGenes);
-    const son: string[] = processArray(sonGenes);
-    const father: string[] = processArray(fatherGenes);
+    const mother: string[] = JSON.parse(motherGenes);
+    const son: string[] = JSON.parse(sonGenes);
+    const father: string[] = JSON.parse(fatherGenes);
 
     let table: { value: string }[][] = [
         [
@@ -40,13 +26,22 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "AMEL",
             },
             {
-                value: "X X",
+                value: "X",
             },
             {
-                value: "X Y",
+                value: "X",
             },
             {
-                value: "X Y",
+                value: "X",
+            },
+            {
+                value: "X",
+            },
+            {
+                value: "X",
+            },
+            {
+                value: "Y",
             },
             {
                 value: "",
@@ -78,22 +73,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D3S1358",
             },
             {
-                value: "18 19",
+                value: "18",
             },
             {
-                value: "19 30",
+                value: "19",
             },
             {
-                value: "13 30",
+                value: "19",
+            },
+            {
+                value: "30",
+            },
+            {
+                value: "13",
+            },
+            {
+                value: "30",
             },
             {
                 value: "30",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -119,22 +120,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D1S1656",
             },
             {
-                value: "15 15",
+                value: "15",
             },
             {
-                value: "15 15",
+                value: "15",
             },
             {
-                value: "15 15",
+                value: "15",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "15",
             },
             {
                 value: "15",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -160,22 +167,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D2S441",
             },
             {
-                value: "25 26",
+                value: "25",
             },
             {
-                value: "24 25",
+                value: "26",
             },
             {
-                value: "24 26",
+                value: "24",
+            },
+            {
+                value: "25",
+            },
+            {
+                value: "24",
+            },
+            {
+                value: "26",
             },
             {
                 value: "24",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -201,22 +214,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D10S1248",
             },
             {
-                value: "20 20",
+                value: "20",
             },
             {
-                value: "20 21",
+                value: "20",
             },
             {
-                value: "21 21",
+                value: "20",
+            },
+            {
+                value: "21",
+            },
+            {
+                value: "21",
+            },
+            {
+                value: "21",
             },
             {
                 value: "21",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -242,22 +261,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D13S317",
             },
             {
-                value: "30 30",
+                value: "30",
             },
             {
-                value: "30 31",
+                value: "30",
             },
             {
-                value: "31 32",
+                value: "30",
+            },
+            {
+                value: "31",
+            },
+            {
+                value: "31",
+            },
+            {
+                value: "32",
             },
             {
                 value: "31",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -283,22 +308,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "PENTA E",
             },
             {
-                value: "15 16",
+                value: "15",
             },
             {
-                value: "15 16",
+                value: "16",
             },
             {
-                value: "15 16",
+                value: "15",
             },
             {
-                value: "15/16",
+                value: "16",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "16",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -324,22 +355,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D16S539",
             },
             {
-                value: "14 15",
+                value: "14",
             },
             {
-                value: "14 15",
+                value: "15",
             },
             {
-                value: "15 16",
+                value: "14",
             },
             {
-                value: "14/15",
+                value: "15",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "16",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -365,22 +402,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D18S51",
             },
             {
-                value: "18 19",
+                value: "18",
             },
             {
-                value: "19 30",
+                value: "19",
             },
             {
-                value: "13 30",
+                value: "19",
+            },
+            {
+                value: "30",
+            },
+            {
+                value: "13",
+            },
+            {
+                value: "30",
             },
             {
                 value: "30",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -406,22 +449,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D2S1338",
             },
             {
-                value: "25 26",
+                value: "25",
             },
             {
-                value: "24 25",
+                value: "26",
             },
             {
-                value: "24 26",
+                value: "24",
+            },
+            {
+                value: "25",
+            },
+            {
+                value: "24",
+            },
+            {
+                value: "26",
             },
             {
                 value: "24",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -447,22 +496,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "CSF1PO",
             },
             {
-                value: "14 15",
+                value: "14",
             },
             {
-                value: "14 15",
+                value: "15",
             },
             {
-                value: "15 15",
+                value: "14",
             },
             {
-                value: "14/15",
+                value: "15",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -488,22 +543,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "PENTA D",
             },
             {
-                value: "8 8",
+                value: "8",
             },
             {
-                value: "8 8",
+                value: "8",
             },
             {
-                value: "8 8",
+                value: "8",
+            },
+            {
+                value: "8",
+            },
+            {
+                value: "8",
+            },
+            {
+                value: "8",
             },
             {
                 value: "8",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -529,22 +590,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "TH01",
             },
             {
-                value: "20.3 20.3",
+                value: "20.3",
             },
             {
-                value: "20.3 20.3",
+                value: "20.3",
             },
             {
-                value: "20.3 21.3",
+                value: "20.3",
+            },
+            {
+                value: "20.3",
+            },
+            {
+                value: "20.3",
+            },
+            {
+                value: "21.3",
             },
             {
                 value: "20.3",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -570,22 +637,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "vWA",
             },
             {
-                value: "18 19",
+                value: "18",
             },
             {
-                value: "19 30",
+                value: "19",
             },
             {
-                value: "13 30",
+                value: "19",
+            },
+            {
+                value: "30",
+            },
+            {
+                value: "13",
+            },
+            {
+                value: "30",
             },
             {
                 value: "30",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -611,22 +684,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D21S11",
             },
             {
-                value: "2 3",
+                value: "2",
             },
             {
-                value: "2 3",
+                value: "3",
             },
             {
-                value: "2 2",
+                value: "2",
             },
             {
-                value: "2/3",
+                value: "3",
+            },
+            {
+                value: "2",
+            },
+            {
+                value: "2",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -652,22 +731,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D7S820",
             },
             {
-                value: "10 10",
+                value: "10",
             },
             {
-                value: "10 11",
+                value: "10",
             },
             {
-                value: "11 11",
+                value: "10",
+            },
+            {
+                value: "11",
+            },
+            {
+                value: "11",
+            },
+            {
+                value: "11",
             },
             {
                 value: "11",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -693,22 +778,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D5S818",
             },
             {
-                value: "5 6",
+                value: "5",
             },
             {
-                value: "6 7",
+                value: "6",
             },
             {
-                value: "7 8",
+                value: "6",
+            },
+            {
+                value: "7",
+            },
+            {
+                value: "7",
+            },
+            {
+                value: "8",
             },
             {
                 value: "7",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -734,22 +825,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "TPOX",
             },
             {
-                value: "14 15",
+                value: "14",
             },
             {
-                value: "15 17",
+                value: "15",
             },
             {
-                value: "17 20",
+                value: "15",
+            },
+            {
+                value: "17",
+            },
+            {
+                value: "17",
+            },
+            {
+                value: "20",
             },
             {
                 value: "17",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -775,22 +872,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D8S1179",
             },
             {
-                value: "25 25",
+                value: "25",
             },
             {
-                value: "25 25",
+                value: "25",
             },
             {
-                value: "24 25",
+                value: "25",
+            },
+            {
+                value: "25",
+            },
+            {
+                value: "24",
+            },
+            {
+                value: "25",
             },
             {
                 value: "25",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -816,22 +919,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D12S391",
             },
             {
-                value: "11 11.3",
+                value: "11",
             },
             {
-                value: "10 11.3",
+                value: "11.3",
             },
             {
-                value: "8 10",
+                value: "10",
+            },
+            {
+                value: "11.3",
+            },
+            {
+                value: "8",
+            },
+            {
+                value: "10",
             },
             {
                 value: "10",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -857,22 +966,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D19S433",
             },
             {
-                value: "20 25",
+                value: "20",
             },
             {
-                value: "25 30",
+                value: "25",
             },
             {
-                value: "30 30.2",
+                value: "25",
+            },
+            {
+                value: "30",
+            },
+            {
+                value: "30",
+            },
+            {
+                value: "30.2",
             },
             {
                 value: "30",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -895,25 +1010,31 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "",
             },
             {
-                value: "",
+                value: "SE33",
             },
             {
-                value: "SE3314",
+                value: "14",
             },
             {
-                value: " 42.3 42.3",
+                value: "42.3",
             },
             {
-                value: " 44.3 15",
+                value: "42.3",
             },
             {
-                value: " 44.3 44.3",
+                value: "44.3",
+            },
+            {
+                value: "15",
+            },
+            {
+                value: "44.3",
+            },
+            {
+                value: "44.3",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -939,22 +1060,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "D22S1045",
             },
             {
-                value: "10 11",
+                value: "10",
             },
             {
-                value: "10 11",
+                value: "11",
             },
             {
-                value: " 10 11",
+                value: "10",
             },
             {
-                value: " 10/11",
+                value: "11",
+            },
+            {
+                value: "10",
+            },
+            {
+                value: "11",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -1027,22 +1154,28 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "FGA",
             },
             {
-                value: "20 23",
+                value: "20",
             },
             {
-                value: "20 23",
+                value: "23",
             },
             {
-                value: "23 23",
+                value: "20",
             },
             {
-                value: "20/23",
+                value: "23",
+            },
+            {
+                value: "23",
+            },
+            {
+                value: "23",
+            },
+            {
+                value: "#N/D",
             },
             {
                 value: "N",
-            },
-            {
-                value: "",
             },
             {
                 value: "",
@@ -1056,10 +1189,10 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "",
             },
             {
-                value: "",
+                value: "25",
             },
             {
-                value: "25",
+                value: "",
             },
             {
                 value: "",
@@ -1094,12 +1227,6 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
             {
                 value: "",
             },
-            {
-                value: "",
-            },
-            {
-                value: "",
-            },
         ],
         [
             {
@@ -1109,10 +1236,10 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "",
             },
             {
-                value: "",
+                value: "26",
             },
             {
-                value: "26",
+                value: "",
             },
             {
                 value: "",
@@ -1147,9 +1274,6 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
             {
                 value: "",
             },
-            {
-                value: "",
-            },
         ],
         [
             {
@@ -1162,10 +1286,10 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
                 value: "",
             },
             {
-                value: "3",
+                value: "",
             },
             {
-                value: "",
+                value: "3",
             },
             {
                 value: "D6S1043",
@@ -1197,17 +1321,99 @@ export const newTable = (motherGenes: string, sonGenes: string, fatherGenes: str
             {
                 value: "",
             },
-            {
-                value: "",
-            },
         ],
     ];
 
-    for (let i = 0; i < table.length; i++) {
-        table[i][6].value = mother[i];
-        table[i][7].value = son[i];
-        table[i][8].value = father[i];
+    for (let i = 0, j = 0; i < table.length; i++, j += 2) {
+        table[i][6].value = mother[j];
+        table[i][7].value = mother[j + 1];
+        table[i][8].value = son[j];
+        table[i][9].value = son[j + 1];
+        table[i][10].value = father[j];
+        table[i][11].value = father[j + 1];
     }
 
+    for (let i = 1; i < table.length; i++) {
+        table[i][12].value = mandatoryColumn(table, i);
+        table[i][13].value = exclusionColumn(table, i);
+    }
+
+    toast.success("Análise realizada", {
+        position: "bottom-center",
+        theme: "light",
+    });
+
     return table;
+};
+
+const columnMap = {
+    A: 0,
+    B: 1,
+    C: 2,
+    D: 3,
+    E: 4,
+    F: 5,
+    G: 6,
+    H: 7,
+    I: 8,
+    J: 9,
+    K: 10,
+    L: 11,
+    M: 12,
+};
+
+export const getPosition = (
+    table: { value: string }[][],
+    column: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M",
+    row: number
+) => {
+    return table[row][columnMap[column]].value;
+};
+
+export const mandatoryColumn = (table: { value: string }[][], row: number): string => {
+    const motherAlelo = new Set<string>();
+
+    motherAlelo.add(getPosition(table, "G", row));
+    motherAlelo.add(getPosition(table, "H", row));
+
+    if (motherAlelo.has(getPosition(table, "I", row))) {
+        if (motherAlelo.has(getPosition(table, "J", row))) {
+            if (getPosition(table, "I", row) == "") return "";
+
+            return `${getPosition(table, "I", row)} / ${getPosition(table, "J", row)}`;
+        } else {
+            return getPosition(table, "J", row);
+        }
+    } else if (motherAlelo.has(getPosition(table, "J", row))) {
+        return getPosition(table, "I", row);
+    } else {
+        return "Mutação Materna";
+    }
+};
+
+export const exclusionColumn = (table: { value: string }[][], row: number): string => {
+    if (getPosition(table, "M", row) == "") return "";
+
+    const fatherAlelos = new Set<string>();
+
+    fatherAlelos.add(getPosition(table, "K", row));
+    fatherAlelos.add(getPosition(table, "L", row));
+
+    const mandatory = getPosition(table, "M", row);
+
+    if (mandatory.includes("/")) {
+        const heteroZigoto = mandatory.split("/");
+
+        if (fatherAlelos.has(heteroZigoto[0].trim()) || fatherAlelos.has(heteroZigoto[1].trim())) {
+            return "N";
+        } else {
+            return "S";
+        }
+    } else {
+        if (fatherAlelos.has(mandatory)) {
+            return "N";
+        } else {
+            return "S";
+        }
+    }
 };
