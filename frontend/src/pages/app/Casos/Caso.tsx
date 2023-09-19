@@ -4,8 +4,11 @@ import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
 import { Process, ProcessName } from "../../../../../backend/common/process";
 import { Box, Button, Stack, Table, Typography } from "@mui/joy";
+import Modal from "@mui/material/Modal";
 import Barloader from "react-spinners/BarLoader";
 import { AdsClick, Visibility } from "@mui/icons-material";
+import { StyledModalBackdrop } from "@mui/joy/Modal/Modal";
+import { ModalCadastro } from "../Cadastro/ModalCadastro";
 import { Patient } from "../../../../../backend/common/patients";
 
 const override: React.CSSProperties = {
@@ -104,7 +107,22 @@ function CasoRow({ id, caseData }: CasoRowProps) {
             DOCUMENTAÇÃO: async () => {},
             CONCLUÍDO: async () => {},
         };
+        await actions[processData.name]();
+    };
 
+    const [open, setOpen] = React.useState(true);
+    const handleSee = async () => {
+        if (processData == undefined) return;
+        const actions: Record<ProcessName, () => Promise<void>> = {
+            CADASTRO: async () => {
+                ModalCadastro();
+            },
+            COLETA: async () => {},
+            ANALISE: async () => {},
+            SEQUENCIAMENTO: async () => {},
+            DOCUMENTAÇÃO: async () => {},
+            CONCLUÍDO: async () => {},
+        };
         await actions[processData.name]();
     };
 
@@ -159,6 +177,7 @@ function CasoRow({ id, caseData }: CasoRowProps) {
 
                     <Button
                         startDecorator={<Visibility />}
+                        onClick={() => handleSee()}
                         size="sm"
                         variant="soft"
                         color="primary"
