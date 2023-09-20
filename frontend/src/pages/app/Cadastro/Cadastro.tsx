@@ -206,7 +206,7 @@ export default function Cadastro() {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            mother: `${new Date().getTime()}`,
+                            mother: `${new Date().toUTCString()}`,
                         } as Partial<Process>),
                     }
                 )
@@ -270,7 +270,7 @@ export default function Cadastro() {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            son: `${new Date().getTime()}`,
+                            son: `${new Date().toUTCString()}`,
                         } as Partial<Process>),
                     }
                 )
@@ -341,7 +341,7 @@ export default function Cadastro() {
                         },
                         body: JSON.stringify({
                             status: "FEITO",
-                            father: `${new Date().getTime()}`,
+                            father: `${new Date().toUTCString()}`,
                         } as Partial<Process>),
                     }
                 )

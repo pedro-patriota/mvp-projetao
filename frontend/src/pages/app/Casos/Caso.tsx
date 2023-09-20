@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Case } from "../../../../../backend/common/case";
 import { Process, ProcessName } from "../../../../../backend/common/process";
-import { Box, Button, Input, Stack, Table, Typography } from "@mui/joy";
+import { Box, Button, Input, Modal, ModalClose, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Barloader from "react-spinners/BarLoader";
 import { AdsClick, Visibility } from "@mui/icons-material";
 import { Patient } from "../../../../../backend/common/patients";
 
-const override: React.CSSProperties = {
+const override: CSSProperties = {
     display: "block",
     margin: "0 auto",
     borderColor: "red",
@@ -45,7 +45,8 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
     );
 
     const navigate = useNavigate();
-    const [details, setDetails] = React.useState<string>("");
+    const [details, setDetails] = useState<string>("");
+    const [openModal, setOpenModal] = useState<boolean>(false);
 
     const handleSaveDetails = async () => {
         if (details == "") {
@@ -145,109 +146,152 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
             },
             CONCLUÍDO: async () => {},
         };
-        await actions[processData.name]();
-    };
 
-    const handleSee = async () => {
-        if (processData == undefined) return;
-        const actions: Record<ProcessName, () => Promise<void>> = {
-            CADASTRO: async () => {},
-            COLETA: async () => {},
-            ANALISE: async () => {},
-            SEQUENCIAMENTO: async () => {},
-            DOCUMENTAÇÃO: async () => {},
-            CONCLUÍDO: async () => {},
-        };
         await actions[processData.name]();
     };
 
     return (
-        <tr>
-            <td>
-                {processData == undefined ? (
-                    "CARREGANDO..."
-                ) : (
-                    <Typography sx={{ textAlign: "start" }}>{processData.name}</Typography>
-                )}
-            </td>
-            <td>
-                {processData == undefined ? (
-                    "CARREGANDO..."
-                ) : (
-                    <>
-                        <Typography sx={{ textAlign: "start" }}>
-                            {new Date(processData.updatedAt).toLocaleString()}
-                        </Typography>
-                    </>
-                )}
-            </td>
-            <td>
-                {processData == undefined ? (
-                    "CARREGANDO..."
-                ) : (
-                    <>
-                        <Typography
-                            sx={{ width: "max-content", paddingX: "1rem", placeSelf: "center" }}
-                            variant="solid"
-                            color={
-                                processData.status == "PENDENTE"
-                                    ? "neutral"
-                                    : processData.status == "FAZENDO"
-                                    ? "primary"
-                                    : "success"
-                            }>
-                            {processData.status}
-                        </Typography>
-                    </>
-                )}
-            </td>
-            <td>
-                {processData == undefined ? (
-                    "CARREGANDO..."
-                ) : (
-                    <Stack direction="row" spacing={1}>
-                        <Input
-                            value={details}
-                            sx={{ width: "100%" }}
-                            placeholder="Detalhes..."
-                            onChange={(event) => setDetails(event.target.value)}
-                        />
-                        <Button onClick={() => handleSaveDetails()}>Save</Button>
-                    </Stack>
-                )}
-            </td>
-            <td>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                    {processData == undefined || processData.name != "CONCLUÍDO" ? (
+        <>
+            <tr>
+                <td>
+                    {processData == undefined ? (
+                        "CARREGANDO..."
+                    ) : (
+                        <Typography sx={{ textAlign: "start" }}>{processData.name}</Typography>
+                    )}
+                </td>
+                <td>
+                    {processData == undefined ? (
+                        "CARREGANDO..."
+                    ) : (
+                        <>
+                            <Typography sx={{ textAlign: "start" }}>
+                                {new Date(processData.updatedAt).toLocaleString()}
+                            </Typography>
+                        </>
+                    )}
+                </td>
+                <td>
+                    {processData == undefined ? (
+                        "CARREGANDO..."
+                    ) : (
+                        <>
+                            <Typography
+                                sx={{ width: "max-content", paddingX: "1rem", placeSelf: "center" }}
+                                variant="solid"
+                                color={
+                                    processData.status == "PENDENTE"
+                                        ? "neutral"
+                                        : processData.status == "FAZENDO"
+                                        ? "primary"
+                                        : "success"
+                                }>
+                                {processData.status}
+                            </Typography>
+                        </>
+                    )}
+                </td>
+                <td>
+                    {processData == undefined ? (
+                        "CARREGANDO..."
+                    ) : (
+                        <Stack direction="row" spacing={1}>
+                            <Input
+                                value={details}
+                                sx={{ width: "100%" }}
+                                placeholder="Detalhes..."
+                                onChange={(event) => setDetails(event.target.value)}
+                            />
+                            <Button onClick={() => handleSaveDetails()}>Save</Button>
+                        </Stack>
+                    )}
+                </td>
+                <td>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        {processData == undefined || processData.name != "CONCLUÍDO" ? (
+                            <Button
+                                onClick={() => handleAction()}
+                                startDecorator={<AdsClick />}
+                                size="sm"
+                                variant="soft"
+                                color="success"
+                                disabled={
+                                    processData == undefined ||
+                                    processData.status == "FEITO" ||
+                                    processData.status == "PENDENTE"
+                                }>
+                                Fazer
+                            </Button>
+                        ) : (
+                            <></>
+                        )}
                         <Button
-                            onClick={() => handleAction()}
-                            startDecorator={<AdsClick />}
+                            startDecorator={<Visibility />}
+                            onClick={() => setOpenModal(true)}
                             size="sm"
                             variant="soft"
-                            color="success"
-                            disabled={
-                                processData == undefined ||
-                                processData.status == "FEITO" ||
-                                processData.status == "PENDENTE"
-                            }>
-                            Fazer
+                            color="primary"
+                            disabled={processData == undefined || processData.status != "FEITO"}>
+                            Ver
                         </Button>
-                    ) : (
-                        <></>
-                    )}
-
-                    <Button
-                        startDecorator={<Visibility />}
-                        onClick={() => handleSee()}
-                        size="sm"
-                        variant="soft"
-                        color="primary"
-                        disabled={processData == undefined || processData.status != "FEITO"}>
-                        Ver
-                    </Button>
-                </Box>
-            </td>
-        </tr>
+                    </Box>
+                </td>
+            </tr>
+            <Modal
+                aria-labelledby="modal-title"
+                aria-describedby="modal-desc"
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}>
+                <Sheet
+                    variant="outlined"
+                    sx={{
+                        width: "40rem",
+                        borderRadius: "md",
+                        p: 3,
+                        boxShadow: "lg",
+                    }}>
+                    <ModalClose variant="plain" sx={{ m: 1 }} />
+                    <Typography
+                        component="h2"
+                        id="modal-title"
+                        level="h2"
+                        textColor="inherit"
+                        fontWeight="lg"
+                        mb={1}>
+                        Detalhes do processo
+                    </Typography>
+                    <Typography level="h4">
+                        Mãe:{" "}
+                        <Typography level="body-md">
+                            {processData == undefined
+                                ? "Carregando..."
+                                : new Date(processData.mother).toLocaleString()}
+                        </Typography>
+                    </Typography>
+                    <Typography level="h4">
+                        Criança:{" "}
+                        <Typography level="body-md">
+                            {processData == undefined
+                                ? "Carregando..."
+                                : new Date(processData.son).toLocaleString()}
+                        </Typography>
+                    </Typography>
+                    <Typography level="h4">
+                        Pai:{" "}
+                        <Typography level="body-md">
+                            {processData == undefined
+                                ? "Carregando..."
+                                : new Date(processData.father).toLocaleString()}
+                        </Typography>
+                    </Typography>
+                </Sheet>
+            </Modal>
+        </>
     );
 }
 
@@ -414,9 +458,9 @@ export default function Caso() {
                                     </thead>
                                     <tbody>
                                         {caseData.processes.map((process) => (
-                                            <React.Fragment key={process}>
+                                            <Fragment key={process}>
                                                 <ProcessRow id={process} caseData={caseData} />
-                                            </React.Fragment>
+                                            </Fragment>
                                         ))}
                                     </tbody>
                                 </Table>
