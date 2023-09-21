@@ -149,13 +149,12 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
             .catch(() => undefined)
 
         if (caseData == undefined) {
-            console.log('1')
             response.status(500).send()
             return
         }
 
         if (body.person == 'M') {
-            const result = await PatientsModel.update(
+            const resultPatient = await PatientsModel.update(
                 { genes: JSON.stringify(body.genes) },
                 {
                     where: {
@@ -164,7 +163,21 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
                 }
             )
 
-            if (result[0] == 0) {
+            if (resultPatient[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            const resultProcess = await ProcessModel.update(
+                { mother: new Date().toUTCString() },
+                {
+                    where: {
+                        id: caseData.processes[2],
+                    },
+                }
+            )
+
+            if (resultProcess[0] == 0) {
                 response.status(404).send()
                 return
             }
@@ -185,6 +198,20 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
                 return
             }
 
+            const resultProcess = await ProcessModel.update(
+                { son: new Date().toUTCString() },
+                {
+                    where: {
+                        id: caseData.processes[2],
+                    },
+                }
+            )
+
+            if (resultProcess[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
             response.status(200).send()
         } else {
             const genesResult = await PatientsModel.update(
@@ -197,19 +224,17 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
             )
 
             if (genesResult[0] == 0) {
-                console.log('2')
                 response.status(500).send()
                 return
             }
 
-            const sequencingProcessResult = await ProcessModel.update({ status: 'FEITO' } as Partial<Process>, {
+            const sequencingProcessResult = await ProcessModel.update({ status: 'FEITO', father: new Date().toUTCString() } as Partial<Process>, {
                 where: {
                     id: caseData.processes[2],
                 },
             })
 
             if (sequencingProcessResult[0] == 0) {
-                console.log('3')
                 response.status(500).send()
                 return
             }
@@ -221,7 +246,6 @@ export async function ProcessSequencingPatientGene(request: Request, response: R
             })
 
             if (analiseProcessResult[0] == 0) {
-                console.log('4')
                 response.status(500).send()
                 return
             }

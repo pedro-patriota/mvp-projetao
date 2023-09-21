@@ -45,12 +45,70 @@ function generatePhone(): string {
         .substring(0, 4)}-${subscriberNumber.toString().substring(4)}`;
 }
 
+function generateDate(): string {
+    const currentDate = new Date();
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Note: Month is 0-based.
+    const year = String(currentDate.getFullYear());
+
+    return `${day}/${month}/${year}`;
+}
+
+// Arrays of Brazilian first and last names (you can expand these with more names)
+const brazilianFirstNames: string[] = [
+    "Ana",
+    "Maria",
+    "Beatriz",
+    "Camila",
+    "Juliana",
+    "João",
+    "Pedro",
+    "Lucas",
+    "Gabriel",
+    "Mateus",
+];
+
+const brazilianLastNames: string[] = [
+    "Silva",
+    "Santos",
+    "Pereira",
+    "Ferreira",
+    "Oliveira",
+    "Rodrigues",
+    "Lima",
+    "Carvalho",
+    "Gonçalves",
+    "Almeida",
+];
+
+// Function to generate a random Brazilian female full name
+function generateBrazilianFemaleFullName(): string {
+    const randomFirstNameIndex = Math.floor(Math.random() * brazilianFirstNames.length);
+    const randomLastNameIndex = Math.floor(Math.random() * brazilianLastNames.length);
+
+    const firstName = brazilianFirstNames[randomFirstNameIndex];
+    const lastName = brazilianLastNames[randomLastNameIndex];
+
+    return `${firstName} ${lastName}`;
+}
+
+// Function to generate a random Brazilian male full name
+function generateBrazilianMaleFullName(): string {
+    const randomFirstNameIndex = Math.floor(Math.random() * brazilianFirstNames.length);
+    const randomLastNameIndex = Math.floor(Math.random() * brazilianLastNames.length);
+
+    const firstName = brazilianFirstNames[randomFirstNameIndex];
+    const lastName = brazilianLastNames[randomLastNameIndex];
+
+    return `${firstName} ${lastName}`;
+}
+
 export default function Cadastro() {
     const { casoId, step } = useParams();
     const [caseData, setCaseData] = useState<Case | undefined>(undefined);
 
-    const [name, setName] = useState<string>("MARCELO VICTOR DA SILVA");
-    const [nascimento, setNascimento] = useState<string>("12/07/1997");
+    const [name, setName] = useState<string>("");
+    const [nascimento, setNascimento] = useState<string>(generateDate());
     const [phone, setPhone] = useState<string>(generatePhone());
     const [naturality, setNaturality] = useState<string>("Brasileira");
     const [cpf, setCpf] = useState<string>(generateRandomCPF());
@@ -69,6 +127,13 @@ export default function Cadastro() {
     const [irmaoGemeo, setIrmaoGemeo] = useState<string>("false");
     const [transplanteMedula, setTransplanteMedula] = useState<string>("false");
     const [transfusaoSangue, setTranfusaoSangue] = useState<string>("false");
+
+    useEffect(() => {
+        console.log(step);
+        setName(
+            step == "mother" ? generateBrazilianFemaleFullName() : generateBrazilianMaleFullName()
+        );
+    }, [step]);
 
     useEffect(() => {
         const loader = async () => {

@@ -236,6 +236,16 @@ export default function Sequenciamentos() {
     }, []);
 
     const createNewSequencing = async () => {
+        toast("Criando sequenciamento...", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            progress: undefined,
+            theme: "light",
+        });
+
         await fetch("http://localhost:3000/sequencing", {
             method: "POST",
             headers: {

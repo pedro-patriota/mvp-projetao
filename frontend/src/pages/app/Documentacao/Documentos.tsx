@@ -164,12 +164,14 @@ export default function Documentos() {
             });
         }
 
+        const now = new Date().toUTCString();
+
         result = await fetch("http://localhost:3000/processes?id=" + caseData.processes[5], {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ status: "FEITO" }),
+            body: JSON.stringify({ status: "FEITO", mother: now, son: now, father: now }),
         })
             .then((res) => {
                 if (res.status == 500) {

@@ -1,0 +1,30 @@
+.Spreadsheet__table {
+    width: "min-content";
+}
+
+.Spreadsheet__cell {
+    width: 150px;
+    font-size: 0.8rem;
+}
+
+th:nth-child(14) {
+    background-color: #e9f3f7;
+    color: #477da5;
+    font-weight: 600;
+}
+
+th:nth-child(15) {
+    background-color: #e9f3f7;
+    color: #477da5;
+    font-weight: 600;
+}
+
+table tr td:nth-child(14) {
+    background-color: #e9f3f7;
+    color: #477da5;
+}
+
+table tr td:nth-child(15) {
+    background-color: #e9f3f7;
+    color: #477da5;
+}

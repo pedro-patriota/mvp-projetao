@@ -10,6 +10,7 @@ import { Patient } from "../../../../../backend/common/patients";
 import Barloader from "react-spinners/BarLoader";
 import { Button } from "@mui/joy";
 import { Process } from "../../../../../backend/common/process";
+import "./Analise.css";
 
 const override: React.CSSProperties = {
     display: "block",
@@ -48,6 +49,8 @@ export default function Analise() {
             return;
         }
 
+        const now = new Date().toUTCString();
+
         let result: boolean = await fetch(
             "http://localhost:3000/processes?id=" + caseData.processes[3],
             {
@@ -55,7 +58,12 @@ export default function Analise() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ status: "FEITO" } as Partial<Process>),
+                body: JSON.stringify({
+                    status: "FEITO",
+                    mother: now,
+                    son: now,
+                    father: now,
+                } as Partial<Process>),
             }
         )
             .then((res) => {
@@ -84,7 +92,12 @@ export default function Analise() {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ status: "FAZENDO" } as Partial<Process>),
+            body: JSON.stringify({
+                status: "FAZENDO",
+                mother: now,
+                son: now,
+                father: now,
+            } as Partial<Process>),
         })
             .then((res) => {
                 if (res.status === 500) {
