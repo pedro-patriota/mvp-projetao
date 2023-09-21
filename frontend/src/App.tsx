@@ -22,7 +22,7 @@ import Documentos from "./pages/app/Documentacao/Documentos";
 export default function FilesExample() {
     return (
         <>
-            <ToastContainer />
+            <ToastContainer autoClose={3000} />
             <BrowserRouter>
                 <Routes>
                     <Route path="home" element={<Navigate to="/" />}></Route>

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Barloader from "react-spinners/BarLoader";
@@ -25,6 +25,7 @@ import { Process } from "../../../../../backend/common/process";
 import Spreadsheet from "react-spreadsheet";
 import { styled } from "@mui/joy";
 import "./Sequenciamento.css";
+import { Patient } from "../../../../../backend/common/patients";
 
 const override: React.CSSProperties = {
     display: "block",
@@ -43,6 +44,104 @@ const VisuallyHiddenInput = styled("input")`
     white-space: nowrap;
     width: 1px;
 `;
+
+const loadPatient = async (cpf: string): Promise<Patient | undefined> => {
+    if (cpf == "") return undefined;
+
+    const result = await fetch("http://localhost:3000/patients?cpf=" + cpf, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((res) => res.json())
+        .then((response: Patient) => response)
+        .catch((e) => {
+            console.log(e);
+
+            return undefined;
+        });
+
+    return result;
+};
+
+interface RenderCasesConfigDrawerProps {
+    setSelectedCases: Dispatch<SetStateAction<string[]>>;
+    selectedCases: string[];
+    caseData: Case;
+}
+
+function RenderCasesConfigDrawer({
+    selectedCases,
+    setSelectedCases,
+    caseData,
+}: RenderCasesConfigDrawerProps) {
+    const [sonData, setSonData] = useState<Patient | undefined>(undefined);
+
+    useEffect(() => {
+        const loader = async () => {
+            const son = await loadPatient(caseData.sonId);
+
+            setSonData(son);
+        };
+
+        loader();
+    }, []);
+
+    const selected = selectedCases.includes(caseData.id);
+
+    return (
+        <ListItem>
+            <AspectRatio
+                variant={selected ? "solid" : "outlined"}
+                color={selected ? "primary" : "neutral"}
+                ratio={1}
+                sx={{
+                    width: 20,
+                    borderRadius: 10,
+                    mr: 1,
+                }}>
+                <div>{selected && <Done />}</div>
+            </AspectRatio>
+            <Checkbox
+                size="sm"
+                color="neutral"
+                disableIcon
+                overlay
+                label={
+                    <Stack spacing={1} sx={{ padding: "0.125rem" }}>
+                        <Typography>ID: {caseData.id}</Typography>
+                        <Typography>
+                            Criança: {sonData == undefined ? "Não registrado" : sonData.name}
+                        </Typography>
+                    </Stack>
+                }
+                variant="outlined"
+                checked={selected}
+                onChange={(event) =>
+                    setSelectedCases((current) => {
+                        const set = new Set([...current, caseData.id]);
+
+                        if (!event.target.checked) {
+                            set.delete(caseData.id);
+                        }
+
+                        return [...set];
+                    })
+                }
+                slotProps={{
+                    action: {
+                        sx: {
+                            "&:hover": {
+                                bgcolor: "transparent",
+                            },
+                        },
+                    },
+                }}
+            />
+        </ListItem>
+    );
+}
 
 interface ConfigDrawerProps {
     cases: Case[];
@@ -131,52 +230,13 @@ function ConfigDrawer({ cases, updateData, sequencingData }: ConfigDrawerProps) 
                                     "--ListItem-radius": "20px",
                                 }}>
                                 {cases.map((item) => {
-                                    const selected = selectedCases.includes(item.id);
-
                                     return (
-                                        <ListItem key={item.id}>
-                                            <AspectRatio
-                                                variant={selected ? "solid" : "outlined"}
-                                                color={selected ? "primary" : "neutral"}
-                                                ratio={1}
-                                                sx={{
-                                                    width: 20,
-                                                    borderRadius: 20,
-                                                    ml: -0.5,
-                                                    mr: 0.75,
-                                                }}>
-                                                <div>{selected && <Done />}</div>
-                                            </AspectRatio>
-                                            <Checkbox
-                                                size="sm"
-                                                color="neutral"
-                                                disableIcon
-                                                overlay
-                                                label={item.id}
-                                                variant="outlined"
-                                                checked={selected}
-                                                onChange={(event) =>
-                                                    setSelectedCases((current) => {
-                                                        const set = new Set([...current, item.id]);
-
-                                                        if (!event.target.checked) {
-                                                            set.delete(item.id);
-                                                        }
-
-                                                        return [...set];
-                                                    })
-                                                }
-                                                slotProps={{
-                                                    action: {
-                                                        sx: {
-                                                            "&:hover": {
-                                                                bgcolor: "transparent",
-                                                            },
-                                                        },
-                                                    },
-                                                }}
-                                            />
-                                        </ListItem>
+                                        <Fragment key={item.id}>
+                                            <RenderCasesConfigDrawer
+                                                selectedCases={selectedCases}
+                                                setSelectedCases={setSelectedCases}
+                                                caseData={item}></RenderCasesConfigDrawer>
+                                        </Fragment>
                                     );
                                 })}
                             </List>

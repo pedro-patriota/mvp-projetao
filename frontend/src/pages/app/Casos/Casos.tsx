@@ -391,6 +391,16 @@ export default function Casos() {
     }, []);
 
     const createNewCase = async () => {
+        toast("Criando caso...", {
+            position: "bottom-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            progress: undefined,
+            theme: "light",
+        });
+
         await fetch("http://localhost:3000/cases", {
             method: "POST",
             headers: {
