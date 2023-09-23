@@ -55,18 +55,9 @@ function generateDate(): string {
 }
 
 // Arrays of Brazilian first and last names (you can expand these with more names)
-const brazilianFirstNames: string[] = [
-    "Ana",
-    "Maria",
-    "Beatriz",
-    "Camila",
-    "Juliana",
-    "João",
-    "Pedro",
-    "Lucas",
-    "Gabriel",
-    "Mateus",
-];
+const brazilianFemaleFirstNames: string[] = ["Ana", "Maria", "Beatriz", "Camila", "Juliana"];
+
+const brazilianMaleFirstNames: string[] = ["João", "Pedro", "Lucas", "Gabriel", "Mateus"];
 
 const brazilianLastNames: string[] = [
     "Silva",
@@ -83,10 +74,10 @@ const brazilianLastNames: string[] = [
 
 // Function to generate a random Brazilian female full name
 function generateBrazilianFemaleFullName(): string {
-    const randomFirstNameIndex = Math.floor(Math.random() * brazilianFirstNames.length);
+    const randomFirstNameIndex = Math.floor(Math.random() * brazilianFemaleFirstNames.length);
     const randomLastNameIndex = Math.floor(Math.random() * brazilianLastNames.length);
 
-    const firstName = brazilianFirstNames[randomFirstNameIndex];
+    const firstName = brazilianFemaleFirstNames[randomFirstNameIndex];
     const lastName = brazilianLastNames[randomLastNameIndex];
 
     return `${firstName} ${lastName}`;
@@ -94,10 +85,10 @@ function generateBrazilianFemaleFullName(): string {
 
 // Function to generate a random Brazilian male full name
 function generateBrazilianMaleFullName(): string {
-    const randomFirstNameIndex = Math.floor(Math.random() * brazilianFirstNames.length);
+    const randomFirstNameIndex = Math.floor(Math.random() * brazilianMaleFirstNames.length);
     const randomLastNameIndex = Math.floor(Math.random() * brazilianLastNames.length);
 
-    const firstName = brazilianFirstNames[randomFirstNameIndex];
+    const firstName = brazilianMaleFirstNames[randomFirstNameIndex];
     const lastName = brazilianLastNames[randomLastNameIndex];
 
     return `${firstName} ${lastName}`;
@@ -130,8 +121,9 @@ export default function Cadastro() {
 
     useEffect(() => {
         console.log(step);
+
         setName(
-            step == "mother" ? generateBrazilianFemaleFullName() : generateBrazilianMaleFullName()
+            step != "mother" ? generateBrazilianMaleFullName() : generateBrazilianFemaleFullName()
         );
     }, [step]);
 

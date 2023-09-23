@@ -6,6 +6,8 @@ import { StyledEngineProvider } from "@mui/joy/styles";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <StyledEngineProvider injectFirst>
-        <App />
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
     </StyledEngineProvider>
 );
