@@ -475,6 +475,10 @@ export default function Sequenciamento() {
     };
 
     const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+        if (sequencingData == undefined) {
+            return;
+        }
+
         const file = event.target.files?.[0];
 
         if (file) {
@@ -493,31 +497,34 @@ export default function Sequenciamento() {
                         }
 
                         const caseId = line[0].slice(2);
-                        const person = line[0].slice(0, 1);
-                        const genes = line.splice(1);
-                        genes.pop();
 
-                        await fetch("http://localhost:3000/sequencing/genes", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ caseId, person, genes }),
-                        }).then((res) => {
-                            if (res.status == 500) {
-                                toast.error("Algo deu errado :/", {
-                                    position: "bottom-center",
-                                    theme: "light",
-                                });
-                            } else {
-                                if (person == "P") {
-                                    toast.success(`Caso ${caseId} processado.`, {
+                        if (sequencingData.cases.includes(caseId)) {
+                            const person = line[0].slice(0, 1);
+                            const genes = line.splice(1);
+                            genes.pop();
+
+                            await fetch("http://localhost:3000/sequencing/genes", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ caseId, person, genes }),
+                            }).then((res) => {
+                                if (res.status == 500) {
+                                    toast.error("Algo deu errado :/", {
                                         position: "bottom-center",
                                         theme: "light",
                                     });
+                                } else {
+                                    if (person == "P") {
+                                        toast.success(`Caso ${caseId} processado.`, {
+                                            position: "bottom-center",
+                                            theme: "light",
+                                        });
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             };

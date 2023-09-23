@@ -202,7 +202,7 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
                                 placeholder="Detalhes..."
                                 onChange={(event) => setDetails(event.target.value)}
                             />
-                            <Button onClick={() => handleSaveDetails()}>Save</Button>
+                            <Button onClick={() => handleSaveDetails()}>Salvar</Button>
                         </Stack>
                     )}
                 </td>

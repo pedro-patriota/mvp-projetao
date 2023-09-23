@@ -3,6 +3,7 @@ import IconButton from "@mui/joy/IconButton";
 import React from "react";
 import ScienceIcon from "@mui/icons-material/ScienceOutlined";
 import Typography from "@mui/joy/Typography";
+import GenoflowLogo from "../assets/LogoGenoflow.svg";
 
 export default function Logo() {
     return (
@@ -14,9 +15,7 @@ export default function Logo() {
                 alignItems: "center",
                 pointerEvents: "none",
             }}>
-            <IconButton size="sm" variant="soft">
-                <ScienceIcon />
-            </IconButton>
+            <img src={GenoflowLogo} style={{ width: "1.5rem" }} />
             <Box sx={{ display: "flex", flexDirection: "row", pointerEvents: "none" }}>
                 <Typography component="h1" fontWeight="xl" textColor="primary.500">
                     Geno

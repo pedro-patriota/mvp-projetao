@@ -52,7 +52,6 @@ export default function AppLayout() {
                         </Link>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", gap: 1.5 }}>
-                        <Button variant="soft">Costa</Button>
                         <Button onClick={() => navigate("/signin")}>Sair</Button>
                     </Box>
                 </Box>
