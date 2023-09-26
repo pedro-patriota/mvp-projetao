@@ -45,13 +45,24 @@ function generatePhone(): string {
         .substring(0, 4)}-${subscriberNumber.toString().substring(4)}`;
 }
 
-function generateDate(): string {
-    const currentDate = new Date();
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Note: Month is 0-based.
-    const year = String(currentDate.getFullYear());
+function formatDateCustom(date: Date): string {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
 
     return `${day}/${month}/${year}`;
+}
+
+function randomDate(startYear: number, endYear: number): Date {
+    const year = startYear + Math.floor(Math.random() * (endYear - startYear + 1));
+    const month = Math.floor(Math.random() * 12); // 0-11
+    const day = Math.floor(Math.random() * 31) + 1; // 1-31
+    const hours = Math.floor(Math.random() * 24); // 0-23
+    const minutes = Math.floor(Math.random() * 60); // 0-59
+    const seconds = Math.floor(Math.random() * 60); // 0-59
+    const milliseconds = Math.floor(Math.random() * 1000); // 0-999
+
+    return new Date(year, month, day, hours, minutes, seconds, milliseconds);
 }
 
 // Arrays of Brazilian first and last names (you can expand these with more names)
@@ -99,7 +110,7 @@ export default function Cadastro() {
     const [caseData, setCaseData] = useState<Case | undefined>(undefined);
 
     const [name, setName] = useState<string>("");
-    const [nascimento, setNascimento] = useState<string>(generateDate());
+    const [nascimento, setNascimento] = useState<string>(formatDateCustom(randomDate(1950, 2000)));
     const [phone, setPhone] = useState<string>(generatePhone());
     const [naturality, setNaturality] = useState<string>("Brasileira");
     const [cpf, setCpf] = useState<string>(generateRandomCPF());
@@ -120,11 +131,15 @@ export default function Cadastro() {
     const [transfusaoSangue, setTranfusaoSangue] = useState<string>("false");
 
     useEffect(() => {
-        console.log(step);
-
         setName(
             step != "mother" ? generateBrazilianMaleFullName() : generateBrazilianFemaleFullName()
         );
+
+        if (step == "mother" || step == "father") {
+            setNascimento(formatDateCustom(randomDate(1965, 1970)));
+        } else {
+            setNascimento(formatDateCustom(randomDate(1995, 2000)));
+        }
     }, [step]);
 
     useEffect(() => {

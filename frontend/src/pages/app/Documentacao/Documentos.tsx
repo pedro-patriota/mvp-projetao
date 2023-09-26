@@ -312,162 +312,202 @@ export default function Documentos() {
                     ref={pdfRef}
                     style={{
                         width: "100%",
-                        gap: "1rem",
                         display: "flex",
-                        flexDirection: "column",
-                        borderWidth: "1px",
-                        borderStyle: "solid",
-                        borderColor: "#000",
                         padding: "1rem",
                     }}>
                     <div
                         style={{
-                            placeSelf: "center",
+                            width: "100%",
+                            gap: "1rem",
                             display: "flex",
                             flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                            borderColor: "#000",
+                            padding: "3rem",
                         }}>
-                        <Typography level="h4">Relatório Pericial</Typography>
-                        <Typography level="h4">Investigação de Parentesco Biológico</Typography>
+                        <Box
+                            sx={{
+                                position: "relative",
+                                width: "100%",
+                                paddingBottom: "3rem",
+                                alignItems: "center",
+                            }}>
+                            <Box
+                                sx={{
+                                    borderStyle: "dashed",
+                                    borderWidth: "2px",
+                                    borderColor: "#000",
+                                    width: "6rem",
+                                    height: "6rem",
+                                    position: "absolute",
+                                    inset: "0px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}>
+                                <Typography level="body-sm">Logo</Typography>
+                            </Box>
+                            <Stack
+                                style={{
+                                    placeSelf: "center",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}>
+                                <Typography level="h4">Relatório Pericial</Typography>
+                                <Typography level="h4">
+                                    Investigação de Parentesco Biológico
+                                </Typography>
+                            </Stack>
+                        </Box>
+                        <Typography level="body-lg" fontWeight={600}>
+                            Número de referência do processo:{" "}
+                            <Typography level="body-md">{casoId}</Typography>
+                        </Typography>
+                        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+                            <Stack spacing={1}>
+                                <Typography level="body-lg" fontWeight={600}>
+                                    Número amostra
+                                </Typography>
+                                <Typography level="body-md">M_{casoId}</Typography>
+                                <Typography level="body-md">F_{casoId}</Typography>
+                                <Typography level="body-md">P_{casoId}</Typography>
+                            </Stack>
+                            <Stack spacing={1}>
+                                <Typography level="body-lg" fontWeight={600}>
+                                    Parentesco
+                                </Typography>
+                                <Typography level="body-md">Mãe</Typography>
+                                <Typography level="body-md">Criança</Typography>
+                                <Typography level="body-md">Suposto pai</Typography>
+                            </Stack>
+                            <Stack spacing={1}>
+                                <Typography level="body-lg" fontWeight={600}>
+                                    Nome
+                                </Typography>
+                                <Typography level="body-md">
+                                    {mother == undefined ? "Não registrado" : mother.name}
+                                </Typography>
+                                <Typography level="body-md">
+                                    {son == undefined ? "Não registrado" : son.name}
+                                </Typography>
+                                <Typography level="body-md">
+                                    {father == undefined ? "Não registrado" : father.name}
+                                </Typography>
+                            </Stack>
+                            <Stack spacing={1}>
+                                <Typography level="body-lg" fontWeight={600}>
+                                    Data de nascimento
+                                </Typography>
+                                <Typography level="body-md">
+                                    {mother == undefined ? "Não registrado" : mother.nascimento}
+                                </Typography>
+                                <Typography level="body-md">
+                                    {son == undefined ? "Não registrado" : son.nascimento}
+                                </Typography>
+                                <Typography level="body-md">
+                                    {father == undefined ? "Não registrado" : father.nascimento}
+                                </Typography>
+                            </Stack>
+                        </Stack>
+                        <Typography level="body-lg" fontWeight={600}>
+                            Metodologia
+                        </Typography>
+                        <Typography level="body-md">
+                            A técnica utilizada é a PCR, que, aliada aos mais modernos equipamentos,
+                            faz com que a metodologia aplicada seja a mais rápida e eficiente em
+                            termos de identificação humana, tendo sido validada internacionalmente.
+                            O ADN foi isolado separadamente de cada amostra utilizando tecnologia de
+                            sequenciamento de genoma humano, foram analisados 27 marcadores durante
+                            a execução do exame para validação dos resultados.
+                        </Typography>
+                        <Typography level="body-lg" fontWeight={600}>
+                            Resultados
+                        </Typography>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Marcadores Genéticos</th>
+                                    <th>Alelo Mãe</th>
+                                    <th>Alelo Mãe</th>
+                                    <th>Alelo Criança</th>
+                                    <th>Alelo Criança</th>
+                                    <th>Alelo Pai</th>
+                                    <th>Alelo Pai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableData.map((row, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>&nbsp;{row[0]}</td>
+                                            <td>&nbsp;{row[1]}</td>
+                                            <td>&nbsp;{row[2]}</td>
+                                            <td>&nbsp;{row[3]}</td>
+                                            <td>&nbsp;{row[4]}</td>
+                                            <td>&nbsp;{row[5]}</td>
+                                            <td>&nbsp;{row[6]}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        <Typography level="body-lg" fontWeight={600}>
+                            Interpretação
+                        </Typography>
+                        <Typography level="body-md">
+                            O suposto pai{" "}
+                            <Typography fontWeight={600}>
+                                {caseData.excluido == "SIM" ? "" : "não"} está excluído
+                            </Typography>{" "}
+                            como pai da criança testada. Baseado nos resultados obtidios e listados
+                            acima a{" "}
+                            <Typography fontWeight={600}>
+                                probabilidade de paternidade é de{" "}
+                                {caseData.probabilidade == 1 ? "99,999999" : caseData.probabilidade}
+                                %
+                            </Typography>
+                            . Esta probabilidade de paternidade é calculada comparado indivíduos
+                            aleatório não relacionados da população caucasiana (assume-se a
+                            probabilidade inicial de 0.50).
+                        </Typography>
+                        <Stack
+                            direction="row"
+                            sx={{ width: "100%", marginBottom: "2rem" }}
+                            spacing={1}>
+                            <Typography sx={{ width: "50%" }} level="body-sm">
+                                Nota: Como as amostras não foram recolhidas sob um processo
+                                devidamente documentado por uma terceira entidade neutra e o
+                                laboratório não pode verificar a origem das amostras, estes
+                                resultados poderão não ser defensáveis em um tribunal para o
+                                estabelecimento da paternidade ou outro processo legal. Os nomes das
+                                pessoas em teste que contam neste relatório foram fornecidos pelo
+                                cliente e não podem ser verificados.
+                            </Typography>
+                            <Typography sx={{ width: "50%" }} level="body-sm">
+                                O laboratório não assume responsabilidade por informação incorreta
+                                ou incompleta. Baseado nas amostras recebidas das partes em teste,
+                                em que as identidades não podem ser verificadas, o diretor do
+                                laboratório declara os dados genéticos corretos.
+                            </Typography>
+                        </Stack>
+                        <Stack
+                            direction="row"
+                            sx={{
+                                justifyContent: "space-between",
+                                paddingX: "15rem",
+                                paddingTop: "2rem",
+                                paddingBottom: "5rem",
+                            }}>
+                            <Typography>Assinatura Cliente</Typography>
+                            <Typography>Profissional Responsável</Typography>
+                        </Stack>
+                        <Typography sx={{ placeSelf: "center" }}>
+                            Feito digitalmente pela <b>Genoflow</b>.
+                        </Typography>
                     </div>
-                    <Typography level="body-lg" fontWeight={600}>
-                        Número de referência do processo:{" "}
-                        <Typography level="body-md">{casoId}</Typography>
-                    </Typography>
-                    <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                        <Stack spacing={1}>
-                            <Typography level="body-lg" fontWeight={600}>
-                                Número amostra
-                            </Typography>
-                            <Typography level="body-md">M_{casoId}</Typography>
-                            <Typography level="body-md">F_{casoId}</Typography>
-                            <Typography level="body-md">P_{casoId}</Typography>
-                        </Stack>
-                        <Stack spacing={1}>
-                            <Typography level="body-lg" fontWeight={600}>
-                                Parentesco
-                            </Typography>
-                            <Typography level="body-md">Mãe</Typography>
-                            <Typography level="body-md">Criança</Typography>
-                            <Typography level="body-md">Suposto pai</Typography>
-                        </Stack>
-                        <Stack spacing={1}>
-                            <Typography level="body-lg" fontWeight={600}>
-                                Nome
-                            </Typography>
-                            <Typography level="body-md">
-                                {mother == undefined ? "Não registrado" : mother.name}
-                            </Typography>
-                            <Typography level="body-md">
-                                {son == undefined ? "Não registrado" : son.name}
-                            </Typography>
-                            <Typography level="body-md">
-                                {father == undefined ? "Não registrado" : father.name}
-                            </Typography>
-                        </Stack>
-                        <Stack spacing={1}>
-                            <Typography level="body-lg" fontWeight={600}>
-                                Data de nascimento
-                            </Typography>
-                            <Typography level="body-md">
-                                {mother == undefined ? "Não registrado" : mother.nascimento}
-                            </Typography>
-                            <Typography level="body-md">
-                                {son == undefined ? "Não registrado" : son.nascimento}
-                            </Typography>
-                            <Typography level="body-md">
-                                {father == undefined ? "Não registrado" : father.nascimento}
-                            </Typography>
-                        </Stack>
-                    </Stack>
-                    <Typography level="body-lg" fontWeight={600}>
-                        Metodologia
-                    </Typography>
-                    <Typography level="body-md">
-                        A técnica utilizada é a PCR, que, aliada aos mais modernos equipamentos, faz
-                        com que a metodologia aplicada seja a mais rápida e eficiente em termos de
-                        identificação humana, tendo sido validada internacionalmente. O ADN foi
-                        isolado separadamente de cada amostra utilizando tecnologia de
-                        sequenciamento de genoma humano, foram analisados 27 marcadores durante a
-                        execução do exame para validação dos resultados.
-                    </Typography>
-                    <Typography level="body-lg" fontWeight={600}>
-                        Resultados
-                    </Typography>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Marcadores Genéticos</th>
-                                <th>Alelo Mãe</th>
-                                <th>Alelo Mãe</th>
-                                <th>Alelo Criança</th>
-                                <th>Alelo Criança</th>
-                                <th>Alelo Pai</th>
-                                <th>Alelo Pai</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {tableData.map((row, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>&nbsp;{row[0]}</td>
-                                        <td>&nbsp;{row[1]}</td>
-                                        <td>&nbsp;{row[2]}</td>
-                                        <td>&nbsp;{row[3]}</td>
-                                        <td>&nbsp;{row[4]}</td>
-                                        <td>&nbsp;{row[5]}</td>
-                                        <td>&nbsp;{row[6]}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                    <Typography level="body-lg" fontWeight={600}>
-                        Interpretação
-                    </Typography>
-                    <Typography level="body-md">
-                        O suposto pai{" "}
-                        <Typography fontWeight={600}>
-                            {caseData.excluido == "SIM" ? "" : "não"} está excluído
-                        </Typography>{" "}
-                        como pai da criança testada. Baseado nos resultados obtidios e listados
-                        acima a{" "}
-                        <Typography fontWeight={600}>
-                            probabilidade de paternidade é de{" "}
-                            {caseData.probabilidade == 1 ? "99,999999" : caseData.probabilidade}%
-                        </Typography>
-                        . Esta probabilidade de paternidade é calculada comparado indivíduos
-                        aleatório não relacionados da população caucasiana (assume-se a
-                        probabilidade inicial de 0.50).
-                    </Typography>
-                    <Stack direction="row" sx={{ width: "100%", marginBottom: "2rem" }} spacing={1}>
-                        <Typography sx={{ width: "50%" }} level="body-sm">
-                            Nota: Como as amostras não foram recolhidas sob um processo devidamente
-                            documentado por uma terceira entidade neutra e o laboratório não pode
-                            verificar a origem das amostras, estes resultados poderão não ser
-                            defensáveis em um tribunal para o estabelecimento da paternidade ou
-                            outro processo legal. Os nomes das pessoas em teste que contam neste
-                            relatório foram fornecidos pelo cliente e não podem ser verificados.
-                        </Typography>
-                        <Typography sx={{ width: "50%" }} level="body-sm">
-                            O laboratório não assume responsabilidade por informação incorreta ou
-                            incompleta. Baseado nas amostras recebidas das partes em teste, em que
-                            as identidades não podem ser verificadas, o diretor do laboratório
-                            declara os dados genéticos corretos.
-                        </Typography>
-                    </Stack>
-                    <Stack
-                        direction="row"
-                        sx={{
-                            justifyContent: "space-between",
-                            paddingX: "10rem",
-                            paddingTop: "2rem",
-                            paddingBottom: "5rem",
-                        }}>
-                        <Typography>Assinatura Cliente</Typography>
-                        <Typography>Diretor do laboratório</Typography>
-                    </Stack>
                 </div>
                 <Button
                     onClick={() => handleDocumentacao()}

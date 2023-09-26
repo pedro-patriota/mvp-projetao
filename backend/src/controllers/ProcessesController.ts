@@ -1,8 +1,13 @@
 import { Request, Response } from 'express'
-import { Process, ProcessSchema, newProcess, processNameList } from '../../common/process'
+import { Process, ProcessNameSchema, ProcessSchema, newProcess, processNameList } from '../../common/process'
 import { nanoid } from 'nanoid'
 import { ProcessModel } from '../model/processes/model'
 import { z } from 'zod'
+import { CaseModel } from '../model/case/model'
+import { Case } from '../../common/case'
+import { PatientSchema } from '../../common/patients'
+import { PatientsModel } from '../model/patients/model'
+import { Op } from 'sequelize'
 
 export async function CreateProcess(request: Request, response: Response) {
     const schema = ProcessSchema.omit({ id: true })
@@ -110,5 +115,282 @@ export async function DeleteProcess(request: Request, response: Response) {
             })
     } else {
         response.status(400).send(parsedGet.error)
+    }
+}
+
+export async function RollbackProcess(request: Request, response: Response) {
+    const schema = z.object({
+        caseId: z.string(),
+        type: ProcessNameSchema,
+    })
+
+    const bodyParseParams = schema.safeParse(request.body)
+
+    if (bodyParseParams.success) {
+        const caseData: Case | undefined = await CaseModel.findByPk(request.body.caseId)
+            .then((value) => {
+                if (value != null && value != undefined) {
+                    return { ...value.dataValues, processes: JSON.parse(value.dataValues.processes) } as Case
+                } else {
+                    return undefined
+                }
+            })
+            .catch(() => undefined)
+
+        if (caseData == undefined) {
+            response.status(500).send()
+
+            return
+        }
+
+        if (request.body.type == 'CADASTRO') {
+            let result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'FAZENDO',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[0],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await CaseModel.update(
+                {
+                    sonId: '',
+                    fatherId: '',
+                    motherId: '',
+                },
+                {
+                    where: {
+                        id: caseData.id,
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: 'false',
+                    son: 'false',
+                    father: 'false',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[1],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[2],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[3],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await PatientsModel.update(
+                { genes: '' },
+                {
+                    where: {
+                        [Op.or]: [{ cpf: caseData.fatherId }, { cpf: caseData.motherId }, { cpf: caseData.sonId }],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            } else {
+                response.status(200).send()
+            }
+        } else if (request.body.type == 'COLETA') {
+            let result = await ProcessModel.update(
+                {
+                    mother: 'false',
+                    son: 'false',
+                    father: 'false',
+                    status: 'FAZENDO',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[1],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[2],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[3],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await PatientsModel.update(
+                { genes: '' },
+                {
+                    where: {
+                        [Op.or]: [{ cpf: caseData.fatherId }, { cpf: caseData.motherId }, { cpf: caseData.sonId }],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            } else {
+                response.status(200).send()
+            }
+        } else {
+            let result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'FAZENDO',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[2],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await ProcessModel.update(
+                {
+                    mother: '',
+                    son: '',
+                    father: '',
+                    status: 'PENDENTE',
+                    detalhes: '',
+                },
+                {
+                    where: {
+                        id: caseData.processes[3],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            }
+
+            result = await PatientsModel.update(
+                { genes: '' },
+                {
+                    where: {
+                        [Op.or]: [{ cpf: caseData.fatherId }, { cpf: caseData.motherId }, { cpf: caseData.sonId }],
+                    },
+                }
+            )
+
+            if (result[0] == 0) {
+                response.status(404).send()
+                return
+            } else {
+                response.status(200).send()
+            }
+        }
+    } else {
+        response.status(400).send()
     }
 }
