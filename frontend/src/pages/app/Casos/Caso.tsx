@@ -5,7 +5,7 @@ import { Case } from "../../../../../backend/common/case";
 import { Process, ProcessName } from "../../../../../backend/common/process";
 import { Box, Button, Input, Modal, ModalClose, Sheet, Stack, Table, Typography } from "@mui/joy";
 import Barloader from "react-spinners/BarLoader";
-import { AdsClick, Visibility } from "@mui/icons-material";
+import { AdsClick, Replay, Undo, UndoRounded, Visibility } from "@mui/icons-material";
 import { Patient } from "../../../../../backend/common/patients";
 
 const override: CSSProperties = {
@@ -150,6 +150,135 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
         await actions[processData.name]();
     };
 
+    const handleRollback = async () => {
+        if (processData == undefined) return;
+
+        const actions: Record<"CADASTRO" | "COLETA" | "SEQUENCIAMENTO", () => Promise<void>> = {
+            CADASTRO: async () => {
+                toast("Limpando dados...", {
+                    position: "bottom-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+
+                const result = await fetch("http://localhost:3000/processes/rollback", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ caseId: caseData.id, type: "CADASTRO" }),
+                })
+                    .then((res) => {
+                        if (res.status == 500) {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .catch(() => {
+                        return false;
+                    });
+
+                if (result == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                location.reload();
+            },
+            COLETA: async () => {
+                toast("Limpando dados...", {
+                    position: "bottom-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+
+                const result = await fetch("http://localhost:3000/processes/rollback", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ caseId: caseData.id, type: "COLETA" }),
+                })
+                    .then((res) => {
+                        if (res.status == 500) {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .catch(() => {
+                        return false;
+                    });
+
+                if (result == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                location.reload();
+            },
+            SEQUENCIAMENTO: async () => {
+                toast("Limpando dados...", {
+                    position: "bottom-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+
+                const result = await fetch("http://localhost:3000/processes/rollback", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ caseId: caseData.id, type: "SEQUENCIAMENTO" }),
+                })
+                    .then((res) => {
+                        if (res.status == 500) {
+                            return false;
+                        }
+
+                        return true;
+                    })
+                    .catch(() => {
+                        return false;
+                    });
+
+                if (result == false) {
+                    toast.error("Algo deu errado :/", {
+                        position: "bottom-center",
+                        theme: "light",
+                    });
+
+                    return;
+                }
+
+                location.reload();
+            },
+        };
+
+        await actions[processData.name as "CADASTRO" | "COLETA" | "SEQUENCIAMENTO"]();
+    };
+
     return (
         <>
             <tr>
@@ -157,7 +286,9 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
                     {processData == undefined ? (
                         "CARREGANDO..."
                     ) : (
-                        <Typography sx={{ textAlign: "start" }}>{processData.name}</Typography>
+                        <Typography sx={{ textAlign: "start", fontWeight: 600 }}>
+                            {processData.name}
+                        </Typography>
                     )}
                 </td>
                 <td>
@@ -202,13 +333,17 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
                                 placeholder="Detalhes..."
                                 onChange={(event) => setDetails(event.target.value)}
                             />
-                            <Button onClick={() => handleSaveDetails()}>Salvar</Button>
+                            <Button onClick={() => handleSaveDetails()} size="sm" variant="soft">
+                                Salvar
+                            </Button>
                         </Stack>
                     )}
                 </td>
                 <td>
                     <Box sx={{ display: "flex", gap: 1 }}>
-                        {processData == undefined || processData.name != "CONCLUÍDO" ? (
+                        {processData == undefined || processData.name == "CONCLUÍDO" ? (
+                            <></>
+                        ) : (
                             <Button
                                 onClick={() => handleAction()}
                                 startDecorator={<AdsClick />}
@@ -222,18 +357,38 @@ function ProcessRow({ id, caseData }: ProcessRowProps) {
                                 }>
                                 Fazer
                             </Button>
-                        ) : (
-                            <></>
                         )}
-                        <Button
-                            startDecorator={<Visibility />}
-                            onClick={() => setOpenModal(true)}
-                            size="sm"
-                            variant="soft"
-                            color="primary"
-                            disabled={processData == undefined || processData.status != "FEITO"}>
-                            Ver
-                        </Button>
+                        {processData == undefined ||
+                        processData.name == "CONCLUÍDO" ||
+                        processData.name == "DOCUMENTAÇÃO" ||
+                        processData.name == "ANALISE" ? (
+                            <></>
+                        ) : (
+                            <Button
+                                onClick={() => handleRollback()}
+                                startDecorator={<Replay />}
+                                size="sm"
+                                variant="soft"
+                                color="warning"
+                                disabled={processData.status != "FEITO"}>
+                                Refazer
+                            </Button>
+                        )}
+                        {processData == undefined || processData.name == "CONCLUÍDO" ? (
+                            <></>
+                        ) : (
+                            <Button
+                                startDecorator={<Visibility />}
+                                onClick={() => setOpenModal(true)}
+                                size="sm"
+                                variant="soft"
+                                color="primary"
+                                disabled={
+                                    processData == undefined || processData.status != "FEITO"
+                                }>
+                                Ver
+                            </Button>
+                        )}
                     </Box>
                 </td>
             </tr>
@@ -449,11 +604,19 @@ export default function Caso() {
                                 <Table borderAxis="both">
                                     <thead>
                                         <tr>
-                                            <th style={{ width: "15%" }}>Processo</th>
-                                            <th style={{ width: "20%" }}>Modificado em</th>
-                                            <th style={{ width: "12%" }}>Status</th>
-                                            <th style={{ width: "34%" }}>Detalhes</th>
-                                            <th style={{ width: "20%" }}>Ações</th>
+                                            <th style={{ width: "15%", fontWeight: 600 }}>
+                                                Processo
+                                            </th>
+                                            <th style={{ width: "17%", fontWeight: 600 }}>
+                                                Modificado em
+                                            </th>
+                                            <th style={{ width: "12%", fontWeight: 600 }}>
+                                                Status
+                                            </th>
+                                            <th style={{ width: "29%", fontWeight: 600 }}>
+                                                Detalhes
+                                            </th>
+                                            <th style={{ width: "28%", fontWeight: 600 }}>Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>

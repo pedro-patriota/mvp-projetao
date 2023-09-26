@@ -8,5 +8,6 @@ ProcessRouter.route('/all').get(ProcessesController.GetAllProcess)
 ProcessRouter.route('').get(ProcessesController.GetProcess)
 ProcessRouter.route('').put(ProcessesController.UpdateProcess)
 ProcessRouter.route('').delete(ProcessesController.DeleteProcess)
+ProcessRouter.route('/rollback').patch(ProcessesController.RollbackProcess)
 
 export default ProcessRouter
