@@ -33,10 +33,11 @@ function generateRandomRG(): string {
 
     return `${rgDigits.join("")}`;
 }
+const phoneAreaCodes = [85, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 79,  11, 15, 18, 21, 31, 32, 33];
 
 function generatePhone(): string {
-    const areaCode = Math.floor(Math.random() * 90) + 11; // Random area code between 11 and 99
-    const firstDigit = Math.floor(Math.random() * 10); // Random first digit (0-9)
+    const areaCode = phoneAreaCodes[Math.floor(Math.random() * phoneAreaCodes.length)];  // Random area code between 11 and 99
+    const firstDigit = 9; // First digit must be 9
     const secondDigit = Math.floor(Math.random() * 10); // Random second digit (0-9)
     const subscriberNumber = Math.floor(Math.random() * 900000000) + 100000000; // Random subscriber number between 100,000,000 and 999,999,999
 
